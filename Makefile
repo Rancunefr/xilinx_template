@@ -1,4 +1,6 @@
+TOP = principal
 TB_TOP = tb_principal
+PART = xc7a35tcpg236-1
 
 SRC = \
 	./src/principal.sv \
@@ -6,27 +8,70 @@ SRC = \
 TB_SRC = \
 	./tb/tb_principal.sv \
 
+SDF = netlist/synth_netlist.sdf
+NETLIST = netlist/synth_netlist.v
 
-.timestamp.build: ${SRC}
-	@echo
-	@echo "### BUILD"
-	@echo
-	xvlog --sv ${SRC} ${TB_SRC}
-	touch .timestamp.build
+all: sim_behavioural
 
-.timestamp.bsim_elaborate: .timestamp.build
+
+.timestamp.src_build: ${SRC}
 	@echo
-	@echo "### [TB] ELABORATION (Behavioural simulation)"
+	@echo "### Compilation des sources"
 	@echo
-	xelab -debug typical -top ${TB_TOP} -snapshot tb_snapshot
-	touch .timestamp.bsim_elaborate
+	xvlog --sv ${SRC}
+	touch $@
+
+.timestamp.tb_build: ${TB_SRC}
+	@echo
+	@echo "### Compilation du testbench"
+	@echo
+	xvlog --sv ${TB_SRC}
+	touch $@
+
+
+.timestamp.bsim_elaborate: .timestamp.src_build .timestamp.tb_build
+	@echo
+	@echo "### [Behavioural] Elaboration"
+	@echo
+	xelab -debug typical -top ${TB_TOP} -snapshot snapshot_behavioural
+	touch $@
 	
 .timestamp.bsim: .timestamp.bsim_elaborate
 	@echo
-	@echo "### [TB] SIMULATION (Behavioural simulation)"
+	@echo "### [Behavioural] Simulation"
 	@echo
-	xsim tb_snapshot --tclbatch ./scripts/xsim_cfg.tcl
-	touch .timestamp.bsim
+	xsim snapshot_behavioural --tclbatch ./scripts/xsim_cfg.tcl
+	touch $@
+
+.timestamp.synth: ${SRC}
+	@echo
+	@echo "### Synthese RTL"
+	@echo
+	vivado -mode batch -nojournal -nolog -notrace \
+		-source ./scripts/synthesis.tcl \
+		-tclargs $(PART) $(SDF) $(NETLIST) $(TOP) $(SRC)
+	touch $@
+
+.timestamp.compile_synth_netlist: $(NETLIST) .timestamp.synth
+	@echo
+	@echo "### Compilation de la netlist post synth"
+	@echo
+	xvlog --sv -L unisims_ver $(NETLIST)
+	xvlog /usr/local/Xilinx/Vivado/2024.2/data/verilog/src/glbl.v
+	touch $@
+
+.timestamp.elab_post_synth: .timestamp.tb_build .timestamp.compile_synth_netlist
+	@echo
+	@echo "### Elaboration simulation post synthèse"
+	@echo
+	xelab $(TB_TOP) glbl -debug typical -sdfmax /UUT=$(SDF) -s snapshot_postsynthesis -L unisims_ver
+	touch $@
+
+.timestamp.sim_post_synth: .timestamp.elab_post_synth 
+	@echo
+	@echo "### Simulation post synthèse"
+	@echo
+	xsim snaposhot_postsynthesis --tclbatch ./script/xsim_cfg.tcl
 
 .PHONY: clean
 clean:
@@ -40,9 +85,7 @@ clean:
 .PHONY: build
 build: .timestamp.build
 
-.PHONY: sim_elaborate
-bsim_elaborate: .timestamp.bsim_elaborate
+.PHONY: sim_behavioural
+sim_behavioural: .timestamp.bsim
 
-.PHONY: sim
-bsim: .timestamp.bsim
 
