@@ -3,22 +3,22 @@
 module principal(
     input  logic clk,
     input  logic nrst,
-	input  logic impulse,
     output logic [7:0] led
     );
 
-logic [7:0] counter ;
+logic impulse;
 
-always_ff @(posedge clk) begin               // Circuits Logiques
-    if ( !nrst )
-        counter <= 0;
-    else
-		if ( impulse == 1 )
-        	counter <= (counter == 8'hFF )? 0 : counter + 1 ;
-end
+compteur cnt (
+	.clk(clk),
+	.nrst(nrst),
+	.impulse(impulse),
+	.led(led)
+) ;
 
-always_comb begin
-    led = counter;
-end
+impulse pls( 
+	.clk(clk),
+	.nrst(nrst),
+	.impulse(impulse)
+) ;
 
 endmodule

@@ -4,7 +4,6 @@ module tb_principal;
 
 logic simu_clk ;
 logic simu_nrst ;
-logic simu_pulse ;
 logic [7:0] simu_led ;
 
 parameter CLOCK_PERIOD = 6 ;
@@ -12,17 +11,9 @@ parameter CLOCK_PERIOD = 6 ;
 principal DUT_principal ( 
     .clk(simu_clk),
     .nrst(simu_nrst),
-	.impulse( simu_pulse ),
 	.led(simu_led)
 ) ;
 
-impulse mypulse (
-	.clk( simu_clk ),
-	.nrst( simu_nrst ),
-	.impulse(simu_pulse)
-);
-        
-        
 initial begin
     simu_clk =0 ;
 	repeat (10000) begin

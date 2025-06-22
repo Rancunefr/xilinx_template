@@ -6,7 +6,8 @@ XDC = ./constr/Basys-3-Master.xdc
 
 SRC = \
 	./src/principal.sv \
-	./src/impulse.sv
+	./src/impulse.sv \
+	./src/counter.sv
 
 TB_SRC = \
 	./tb/tb_principal.sv \
@@ -23,97 +24,119 @@ GLBL = /usr/local/Xilinx/Vivado/2024.2/data/verilog/src/glbl.v
 all: sim_behavioural
 
 .timestamp.src_build: ${SRC}
-	@echo
-	@echo "### Compilation des sources"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@printf "### Compilation des sources"
+	@tput sgr0
+	@echo -e
 	xvlog --sv ${SRC}
 	touch $@
 
 .timestamp.tb_build: ${TB_SRC}
-	@echo
-	@echo "### Compilation du testbench"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Compilation du testbench"
+	@tput sgr0
+	@echo -e
 	xvlog --sv ${TB_SRC}
 	touch $@
 
 .timestamp.bsim_elaborate: .timestamp.src_build .timestamp.tb_build
-	@echo
-	@echo "### Elaboration simulation behavioural"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Elaboration simulation behavioural"
+	@tput sgr0
+	@echo -e
 	xelab -debug typical -top ${TB_TOP} -snapshot snapshot_behavioural
 	touch $@
 	
 .timestamp.bsim: .timestamp.bsim_elaborate
-	@echo
-	@echo "### Simulation Behavioural"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Simulation Behavioural"
+	@tput sgr0
+	@echo -e
 	VCD_FILE=waveforms_behavioural.vcd xsim snapshot_behavioural \
 			 -tclbatch ./scripts/sim_vcd.tcl
 
 	touch $@
 
 .timestamp.synth: ${SRC} ${XDC}
-	@echo
-	@echo "### Synthese RTL"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Synthese RTL"
+	@tput sgr0
+	@echo -e
 	vivado -mode batch -nojournal -nolog -notrace \
 		-source ./scripts/synthesis.tcl \
 		-tclargs $(PART) $(SYNTH_SDF) $(SYNTH_NETLIST) $(TOP) $(XDC) $(SRC)
 	touch $@
 
 .timestamp.compile_synth_netlist: .timestamp.synth
-	@echo
-	@echo "### Compilation de la netlist post synth"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Compilation de la netlist post synth"
+	@tput sgr0
+	@echo -e
 	xvlog --sv -L $(LIBS) $(SYNTH_NETLIST)
 	xvlog $(GLBL)
 	touch $@
 
 .timestamp.elab_post_synth: .timestamp.tb_build .timestamp.compile_synth_netlist
-	@echo
-	@echo "### Elaboration simulation post synthèse"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Elaboration simulation post synthèse"
+	@tput sgr0
+	@echo -e
 	xelab $(TB_TOP) glbl -debug typical -sdfmax /UUT=$(SYNTH_SDF) -L $(LIBS) \
 		-s snapshot_postsynthesis 	
 	touch $@
 
 .timestamp.sim_post_synth: .timestamp.elab_post_synth 
-	@echo
-	@echo "### Simulation post synthèse"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Simulation post synthèse"
+	@tput sgr0
+	@echo -e
 	VCD_FILE=waveforms_postsynthesis.vcd xsim snapshot_postsynthesis \
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
 .timestamp.impl:  .timestamp.synth 
-	@echo
-	@echo "### Implementation"
-	@echo
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Implementation"
+	@tput sgr0
+	@echo -e
 	vivado -mode batch -nojournal -nolog -notrace \
 		-source scripts/implementation.tcl \
 		-tclargs $(IMPL_NETLIST) $(IMPL_SDF)
 	touch $@
 
 .timestamp.elab_post_impl: .timestamp.impl 
-	@echo
-	@echo "### Elaboration post implementation"
-	@echo 
-	@echo "Ajout de la timescale à la netlist..."
-	@echo 
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Elaboration post implementation"
+	@tput sgr0
+	@echo -e 
+	@echo -e "Ajout de la timescale à la netlist..."
+	@echo -e 
 	@echo '`timescale 1ns/1ps' | cat - $(IMPL_NETLIST) > tmp_netlist.v && mv tmp_netlist.v $(IMPL_NETLIST)
 	xvlog --sv $(TB_SRC)
 	xvlog -L $(LIBS) $(IMPL_NETLIST)
 	xvlog $(GLBL)
 	xelab $(TB_TOP) glbl -sdfmax /UUT=$(IMPL_SDF) \
 		-L $(LIBS) --debug typical \
-		-s snapshot_postimplentation
+		-s snapshot_postimplementation
 	touch $@
 
 .timestamp.sim_post_impl: .timestamp.elab_post_impl 
-	@echo
-	@echo "### Simulation post implementation"
-	@echo 
-	VCD_FILE=waveforms_postimplementation.vcd xsim snapshot_postimplentation \
+	@echo -e
+	@tput setaf 2
+	@echo -e "### Simulation post implementation"
+	@tput sgr0
+	@echo -e 
+	VCD_FILE=waveforms_postimplementation.vcd xsim snapshot_postimplementation \
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
