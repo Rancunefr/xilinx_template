@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 06/09/2025 01:48:15 PM
-// Design Name: 
-// Module Name: tb_principal
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module tb_principal;
 
@@ -35,7 +15,9 @@ principal DUT_principal (
         
 initial begin
     clk <=0 ;
-    forever #(CLOCK_PERIOD/2) clk <= ~clk;
+	repeat (100) begin
+		#(CLOCK_PERIOD/2) clk <= ~clk;
+	end
 end   
 
 initial begin

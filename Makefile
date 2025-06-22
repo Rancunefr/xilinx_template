@@ -1,36 +1,14 @@
-# Makefile
 
-# === PARAMÈTRES DU PROJET ===
-PROJECT_NAME = mon_projet
-PART = xc7a35tcpg236-1        # FPGA
-TOP_MODULE = principal        # Nom du module top
-TB_MODULE  = tb_principal     # Nom du testbench
+SRC = src/principal.sv
+TB_SRC = tb/tb_principal.sv
 
-VIVADO = vivado -mode batch -source
+build_tb:
+	xvlog --sv ${SRC} {TB_SRC}
 
-# === COMMANDES ===
-.PHONY: all create build sim sim_vcd gtkwave clean program
+tb_elaborate: 
+	xelab -debug typical -top tb_principal -snapshot tb_snapshot
+	
+tb_sim:
+	xsim tb_snapshot --tcl-batch ./scripts/xsim_cfg.tcl
 
-all: build
 
-create:
-	rm -fr build
-	$(VIVADO) scripts/create_project.tcl -tclargs $(PROJECT_NAME) $(PART) $(TOP_MODULE)
-
-build: create
-	$(VIVADO) scripts/build.tcl -tclargs $(PROJECT_NAME)
-
-sim:
-	$(VIVADO) scripts/simulate.tcl -tclargs $(TB_MODULE)
-
-sim_vcd: sim
-	make gtkwave
-
-gtkwave:
-	gtkwave ./build/wave.vcd scripts/gtkwave_config.gtkw &
-
-program:
-	$(VIVADO) scripts/program.tcl -tclargs $(PROJECT_NAME) $(TOP_MODULE)
-
-clean:
-	rm -rf build/*
