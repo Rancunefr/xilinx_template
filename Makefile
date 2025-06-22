@@ -48,7 +48,9 @@ all: sim_behavioural
 	@echo
 	@echo "### Simulation Behavioural"
 	@echo
-	xsim snapshot_behavioural -tclbatch ./scripts/xsim_behavioural.tcl
+	VCD_FILE=waveforms_behavioural.vcd xsim snapshot_behavioural \
+			 -tclbatch ./scripts/sim_vcd.tcl
+
 	touch $@
 
 .timestamp.synth: ${SRC} ${XDC}
@@ -80,7 +82,8 @@ all: sim_behavioural
 	@echo
 	@echo "### Simulation post synthèse"
 	@echo
-	xsim snapshot_postsynthesis --tclbatch ./scripts/xsim_postsynthesis.tcl
+	VCD_FILE=waveforms_postsynthesis.vcd xsim snapshot_postsynthesis \
+			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
 .timestamp.impl:  .timestamp.synth 
@@ -128,6 +131,7 @@ clean:
 	rm -f clockInfo.txt
 	rm -fr netlist
 	rm -fr xsim.dir
+	rm -fr .Xil
 
 .PHONY: build
 build: .timestamp.build
@@ -135,7 +139,14 @@ build: .timestamp.build
 .PHONY: sim_behavioural
 sim_behavioural: .timestamp.bsim
 
-.PHONY: sim_postsynthesis
-sim_postsynthesis: .timestamp.sim_post_synth
+.PHONY: sim_postsynth
+sim_postsynth: .timestamp.sim_post_synth
 
+.PHONY: sim_postimpl
+sim_postimpl: .timestamp.sim_post_impl
 
+.PHONY: impl 
+impl: .timestamp.impl
+
+.PHONY: synth
+synth: .timestamp.synth 
