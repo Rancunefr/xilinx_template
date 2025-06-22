@@ -40,7 +40,7 @@ all: sim_behavioural
 	@echo
 	@echo "### [Behavioural] Simulation"
 	@echo
-	xsim snapshot_behavioural --tclbatch ./scripts/xsim_cfg.tcl
+	xsim snapshot_behavioural -tclbatch ./scripts/xsim_behavioural.tcl
 	touch $@
 
 .timestamp.synth: ${SRC}
@@ -52,7 +52,7 @@ all: sim_behavioural
 		-tclargs $(PART) $(SDF) $(NETLIST) $(TOP) $(SRC)
 	touch $@
 
-.timestamp.compile_synth_netlist: $(NETLIST) .timestamp.synth
+.timestamp.compile_synth_netlist: .timestamp.synth
 	@echo
 	@echo "### Compilation de la netlist post synth"
 	@echo
@@ -71,7 +71,7 @@ all: sim_behavioural
 	@echo
 	@echo "### Simulation post synthèse"
 	@echo
-	xsim snaposhot_postsynthesis --tclbatch ./script/xsim_cfg.tcl
+	xsim snapshot_postsynthesis --tclbatch ./scripts/xsim_postsynthesis.tcl
 
 .PHONY: clean
 clean:
@@ -87,5 +87,9 @@ build: .timestamp.build
 
 .PHONY: sim_behavioural
 sim_behavioural: .timestamp.bsim
+
+
+.PHONY: sim_postsynthesis
+sim_postsynthesis: .timestamp.sim_post_synth
 
 
