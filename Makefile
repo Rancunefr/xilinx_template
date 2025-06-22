@@ -21,7 +21,6 @@ GLBL = /usr/local/Xilinx/Vivado/2024.2/data/verilog/src/glbl.v
 
 all: sim_behavioural
 
-
 .timestamp.src_build: ${SRC}
 	@echo
 	@echo "### Compilation des sources"
@@ -35,7 +34,6 @@ all: sim_behavioural
 	@echo
 	xvlog --sv ${TB_SRC}
 	touch $@
-
 
 .timestamp.bsim_elaborate: .timestamp.src_build .timestamp.tb_build
 	@echo
@@ -116,8 +114,7 @@ all: sim_behavioural
 	@echo 
 	VCD_FILE=waveforms_postimplementation.vcd xsim snapshot_postimplentation \
 			 -tclbatch ./scripts/sim_vcd.tcl
-
-
+	touch $@
 
 .PHONY: clean
 clean:
