@@ -79,7 +79,9 @@ clean:
 	rm -f *.pb
 	rm -f *.jou
 	rm -f .timestamp.*
-	rm -f tb_snapshot.wdb
+	rm -f *.wdb
+	rm -f *.vcd
+	rm -fr netlist
 	rm -fr xsim.dir
 
 .PHONY: build
@@ -87,7 +89,6 @@ build: .timestamp.build
 
 .PHONY: sim_behavioural
 sim_behavioural: .timestamp.bsim
-
 
 .PHONY: sim_postsynthesis
 sim_postsynthesis: .timestamp.sim_post_synth
