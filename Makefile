@@ -6,6 +6,7 @@ XDC = ./constr/Basys-3-Master.xdc
 
 SRC = \
 	./src/principal.sv \
+	./src/impulse.sv
 
 TB_SRC = \
 	./tb/tb_principal.sv \

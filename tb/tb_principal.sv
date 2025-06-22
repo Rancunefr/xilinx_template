@@ -2,30 +2,40 @@
 
 module tb_principal;
 
-logic clk ;
-logic nrst ;
+logic simu_clk ;
+logic simu_nrst ;
+logic simu_pulse ;
+logic [7:0] simu_led ;
 
 parameter CLOCK_PERIOD = 6 ;
 
 principal DUT_principal ( 
-    .clk(clk),
-    .nrst(nrst)
+    .clk(simu_clk),
+    .nrst(simu_nrst),
+	.impulse( simu_pulse ),
+	.led(simu_led)
 ) ;
+
+impulse mypulse (
+	.clk( simu_clk ),
+	.nrst( simu_nrst ),
+	.impulse(simu_pulse)
+);
         
         
 initial begin
-    clk <=0 ;
-	repeat (100) begin
-		#(CLOCK_PERIOD/2) clk <= ~clk;
+    simu_clk =0 ;
+	repeat (10000) begin
+		#(CLOCK_PERIOD/2) simu_clk = ~simu_clk;
 	end
 end   
 
 initial begin
-    nrst <= 1 ;
+    simu_nrst = 1 ;
     #3 ;
-    nrst <= 0 ;
+    simu_nrst = 0 ;
     #6 ;
-    nrst <= 1 ;
+    simu_nrst = 1 ;
  end ;     
     
 endmodule
