@@ -25,7 +25,7 @@ initial begin
     simu_nrst = 1 ;
     #3 ;
     simu_nrst = 0 ;
-    #6 ;
+    #20 ;
     simu_nrst = 1 ;
  end ;     
     
