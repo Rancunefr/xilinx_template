@@ -2,31 +2,32 @@
 
 module tb_principal;
 
-logic simu_clk ;
-logic simu_nrst ;
-logic [7:0] simu_led ;
+logic clk ;
+logic nrst ;
+logic [7:0] led ;
 
 parameter CLOCK_PERIOD = 6 ;
 
 principal DUT_principal ( 
-    .clk(simu_clk),
-    .nrst(simu_nrst),
-	.led(simu_led)
+    .clk(clk),
+    .nrst(nrst),
+	.led(led)
 ) ;
 
 initial begin
-    simu_clk =0 ;
+    clk =0 ;
 	repeat (10000) begin
-		#(CLOCK_PERIOD/2) simu_clk = ~simu_clk;
+		#(CLOCK_PERIOD/2) clk = ~clk;
 	end
 end   
 
 initial begin
-    simu_nrst = 1 ;
+    nrst = 1 ;
     #3 ;
-    simu_nrst = 0 ;
+    nrst = 0 ;
     #20 ;
-    simu_nrst = 1 ;
+    nrst = 1 ;
  end ;     
+
     
 endmodule

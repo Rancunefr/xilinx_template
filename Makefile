@@ -26,7 +26,7 @@ all: sim_behavioural
 .timestamp.src_build: ${SRC}
 	@echo -e
 	@tput setaf 2
-	@printf "### Compilation des sources"
+	@printf "### Compilation (sources)"
 	@tput sgr0
 	@echo -e
 	xvlog --sv ${SRC}
@@ -35,7 +35,7 @@ all: sim_behavioural
 .timestamp.tb_build: ${TB_SRC}
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Compilation du testbench"
+	@echo -e "### Compilation (testbench)"
 	@tput sgr0
 	@echo -e
 	xvlog --sv ${TB_SRC}
@@ -44,7 +44,7 @@ all: sim_behavioural
 .timestamp.bsim_elaborate: .timestamp.src_build .timestamp.tb_build
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Elaboration simulation behavioural"
+	@echo -e "### Elaboration (behavioural simulation)"
 	@tput sgr0
 	@echo -e
 	xelab -debug typical -top ${TB_TOP} -snapshot snapshot_behavioural
@@ -53,7 +53,7 @@ all: sim_behavioural
 .timestamp.bsim: .timestamp.bsim_elaborate
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Simulation Behavioural"
+	@echo -e "### Simulation (behavioural)"
 	@tput sgr0
 	@echo -e
 	VCD_FILE=waveforms_behavioural.vcd xsim snapshot_behavioural \
@@ -64,7 +64,7 @@ all: sim_behavioural
 .timestamp.synth: ${SRC} ${XDC}
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Synthese RTL"
+	@echo -e "### Synthesis"
 	@tput sgr0
 	@echo -e
 	vivado -mode batch -nojournal -nolog -notrace \
@@ -75,7 +75,7 @@ all: sim_behavioural
 .timestamp.compile_synth_netlist: .timestamp.synth
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Compilation de la netlist post synth"
+	@echo -e "### Netlist compilation (post synth)"
 	@tput sgr0
 	@echo -e
 	xvlog --sv -L $(LIBS) $(SYNTH_NETLIST)
@@ -85,7 +85,7 @@ all: sim_behavioural
 .timestamp.elab_post_synth: .timestamp.tb_build .timestamp.compile_synth_netlist
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Elaboration simulation post synthèse"
+	@echo -e "### Elaboration (post synth simulation)"
 	@tput sgr0
 	@echo -e
 	xelab $(TB_TOP) glbl -debug typical -sdfmax /UUT=$(SYNTH_SDF) -L $(LIBS) \
@@ -95,7 +95,7 @@ all: sim_behavioural
 .timestamp.sim_post_synth: .timestamp.elab_post_synth 
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Simulation post synthèse"
+	@echo -e "### Simulation (post synth)"
 	@tput sgr0
 	@echo -e
 	VCD_FILE=waveforms_postsynthesis.vcd xsim snapshot_postsynthesis \
@@ -116,16 +116,16 @@ all: sim_behavioural
 .timestamp.elab_post_impl: .timestamp.impl 
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Elaboration post implementation"
+	@echo -e "### Elaboration (post implementation)"
 	@tput sgr0
 	@echo -e 
-	@echo -e "Ajout de la timescale à la netlist..."
+	@echo -e "Adding timescale to netlist..."
 	@echo -e 
 	@echo '`timescale 1ns/1ps' | cat - $(IMPL_NETLIST) > tmp_netlist.v && mv tmp_netlist.v $(IMPL_NETLIST)
 	xvlog --sv $(TB_SRC)
 	xvlog -L $(LIBS) $(IMPL_NETLIST)
 	xvlog $(GLBL)
-	xelab $(TB_TOP) glbl -sdfmax /UUT=$(IMPL_SDF) \
+	xelab $(TB_TOP) glbl -sdfmax /DUT_principal=$(IMPL_SDF) \
 		-L $(LIBS) --debug typical \
 		-s snapshot_postimplementation
 	touch $@
@@ -133,7 +133,7 @@ all: sim_behavioural
 .timestamp.sim_post_impl: .timestamp.elab_post_impl 
 	@echo -e
 	@tput setaf 2
-	@echo -e "### Simulation post implementation"
+	@echo -e "### Simulation (post implementation)"
 	@tput sgr0
 	@echo -e 
 	VCD_FILE=waveforms_postimplementation.vcd xsim snapshot_postimplementation \
