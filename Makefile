@@ -108,6 +108,8 @@ all: sim_behavioural
 	@echo -e "### Implementation"
 	@tput sgr0
 	@echo -e
+	mkdir -p reports
+	rm -f reports/*
 	vivado -mode batch -nojournal -nolog -notrace \
 		-source scripts/implementation.tcl \
 		-tclargs $(IMPL_NETLIST) $(IMPL_SDF)
@@ -164,6 +166,7 @@ clean:
 	rm -fr netlist
 	rm -fr xsim.dir
 	rm -fr .Xil
+	rm -fr reports
 
 .PHONY: build
 build: .timestamp.build
