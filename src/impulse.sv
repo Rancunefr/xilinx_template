@@ -6,17 +6,17 @@ module impulse(
     output logic impulse
     );
 
-logic [7:0] counter ;
+logic [15:0] cnt ;
 
-always_ff @(posedge clk) begin               // Circuits Logiques
+always_ff @(posedge clk) begin         
     if ( !nrst )
-        counter <= 0;
+        cnt <= 0;
     else
-        counter <= (counter == 8'hFF )? 0 : counter + 1 ;
+        cnt <= (cnt == 16'hFFFF )? 0 : cnt + 1 ;
 end
 
 always_ff @(posedge clk) begin
-	if ( counter == 8'h01 )
+	if ( cnt == 8'h01 )
 		impulse <= 1 ;
 	else
 		impulse <= 0 ;

@@ -3,7 +3,7 @@
 module principal(
     input  logic clk,
     input  logic nrst,
-    output logic [7:0] led
+    output logic [15:0] led
     );
 
 logic impulse;

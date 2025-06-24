@@ -4,7 +4,7 @@ module tb_principal;
 
 logic clk ;
 logic nrst ;
-logic [7:0] led ;
+logic [15:0] led ;
 
 parameter CLOCK_PERIOD = 6 ;
 

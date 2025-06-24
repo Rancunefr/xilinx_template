@@ -15,4 +15,7 @@ write_checkpoint -force impl.dcp
 write_verilog -force -mode synth_stub $netlist_file
 write_sdf -force $sdf_file
 
+# GÉNÉRATION DU BITSTREAM
+write_bitstream -force output.bit
+
 exit

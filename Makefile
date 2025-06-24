@@ -140,6 +140,14 @@ all: sim_behavioural
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
+.timestamp.binary: .timestamp.impl
+	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output.bit output.bin
+	touch $@
+
+.PHONY:burn
+burn:
+	vivado -mode batch -source ./scripts/burn.tcl
+
 .PHONY: clean
 clean:
 	rm -f *.log
@@ -150,6 +158,9 @@ clean:
 	rm -f *.vcd
 	rm -f *.dcp
 	rm -f clockInfo.txt
+	rm -f output.bin
+	rm -f output.bit
+	rm -f output.prm
 	rm -fr netlist
 	rm -fr xsim.dir
 	rm -fr .Xil
@@ -171,3 +182,6 @@ impl: .timestamp.impl
 
 .PHONY: synth
 synth: .timestamp.synth 
+
+.PHONY: binary
+binary: .timestamp.binary
