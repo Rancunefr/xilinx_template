@@ -144,9 +144,9 @@ all: sim_behavioural
 	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output.bit output.bin
 	touch $@
 
-.PHONY:burn
-burn:
-	vivado -mode batch -source ./scripts/burn.tcl
+.PHONY:upload
+upload: .timestamp.binary
+	vivado -mode batch -source ./scripts/upload.tcl
 
 .PHONY: clean
 clean:
@@ -171,17 +171,17 @@ build: .timestamp.build
 .PHONY: sim_behavioural
 sim_behavioural: .timestamp.bsim
 
-.PHONY: sim_postsynth
-sim_postsynth: .timestamp.sim_post_synth
+.PHONY: sim_post_synthesis
+sim_post_synthesis: .timestamp.sim_post_synth
 
-.PHONY: sim_postimpl
-sim_postimpl: .timestamp.sim_post_impl
+.PHONY: sim_post_implementation
+sim_post_implementation: .timestamp.sim_post_impl
 
-.PHONY: impl 
-impl: .timestamp.impl
+.PHONY: implementation 
+implementation: .timestamp.impl
 
-.PHONY: synth
-synth: .timestamp.synth 
+.PHONY: synthesis
+synthesis: .timestamp.synth
 
 .PHONY: binary
 binary: .timestamp.binary
