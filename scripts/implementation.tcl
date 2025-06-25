@@ -1,18 +1,17 @@
-set netlist_file [lindex $::argv 0]
-set sdf_file [lindex $::argv 1]
-
-open_checkpoint synth.dcp
+open_checkpoint checkpoints/synth.dcp
 
 opt_design
 place_design
 route_design
 
-write_checkpoint -force impl.dcp
+write_checkpoint -force checkpoints/impl.dcp
 
 # Export netlist, SDF et rapports necessaires
 
-write_verilog -force -mode synth_stub $netlist_file
-write_sdf -force $sdf_file
+write_verilog -force -mode timesim -sdf_anno true netlists/impl_sim_netlist.v
+write_sdf -force netlists/impl_sim_netlist.sdf
+write_verilog -force -mode design netlists/impl_design_netlist.v
+
 
 # BITSTREAM OUTPUT
 write_bitstream -force output.bit

@@ -8,7 +8,7 @@ logic [15:0] led ;
 
 parameter CLOCK_PERIOD = 6 ;
 
-principal DUT_principal ( 
+principal DUT ( 
     .clk(clk),
     .nrst(nrst),
 	.led(led)
