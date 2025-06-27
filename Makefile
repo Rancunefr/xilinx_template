@@ -16,7 +16,7 @@ SRC_VLG =
 TB_SRC = \
 	./tb/tb_principal.sv \
 
-VIVADO_PATH = /usr/local/Xilinx/Vivado/2024.2
+VIVADO_PATH = /tools/Xilinx/2025.1/Vivado
 
 SYNTH_SIM_SDF =    netlist/synth_sim_netlist.sdf
 SYNTH_SIM_NET =    netlist/synth_sim_netlist.v
@@ -25,7 +25,8 @@ IMPL_SIM_SDF =     netlist/impl_netlist.sdf
 IMPL_SIM_NET =     netlist/impl_netlist.v
 IMPL_DESIGN_NET =  netlist/impl_design_netlist.v
 
-LIBS = unisims_ver
+# LIBS = -L unisims_ver=sim_lib/unisims_ver    # Simulation fonctionnelle
+LIBS = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
 GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
 SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRV_VHDL}
 define banner
@@ -40,20 +41,20 @@ all: sim_behavioural
 
 .timestamp.compile_src: ${SRC}
 	$(call banner, "Compiling\ sources")
-	if [ -n "${SRC_SVLOG}" ]; then xvlog --sv ${SRC_SVLOG} ; fi
-	if [ -n "${SRC_VLOG}" ]; then xvlog ${SRC_VLOG} ; fi
-	if [ -n "${SRC_VHDL}" ]; then xvhdl ${SRC_VHDL} ; fi
+	if [ -n "${SRC_SVLOG}" ]; then xvlog -d XIL_TIMING --sv ${SRC_SVLOG} ; fi
+	if [ -n "${SRC_VLOG}" ]; then xvlog -d XIL_TIMING ${SRC_VLOG} ; fi
+	if [ -n "${SRC_VHDL}" ]; then xvhdl -d XIL_TIMING ${SRC_VHDL} ; fi
 	touch $@
 
 .timestamp.compile_tb: ${TB_SRC}
 	$(call banner, "Compiling\ testbench")
-	xvlog --sv ${TB_SRC}
+	xvlog -d XIL_TIMING --sv ${TB_SRC}
 	touch $@
 
 .timestamp.behavioural_simulation: .timestamp.compile_src .timestamp.compile_tb
 	$(call banner, "Behavioural\ Simulation")
 	@mkdir -p waveforms
-	xelab -snapshot behavioural_simulation \
+	xelab -d XIL_TIMING -snapshot behavioural_simulation \
 		-debug typical \
 		-top ${TB_TOP} 
 	VCD_FILE=waveforms/behavioural.vcd xsim \
@@ -82,12 +83,12 @@ all: sim_behavioural
 .timestamp.post_synthesis_simulation: .timestamp.synthesis
 	$(call banner, "Post-Synthesis\ Simulation")
 	@mkdir -p waveforms
-	xvlog $(GLBL)
-	xvlog --sv -L $(LIBS) netlists/synth_sim_netlist.v
-	xelab -s post_synthesis_simulation \
+	xvlog -d XIL_TIMING $(GLBL)
+	xvlog -d XIL_TIMING $(LIBS) -sv netlists/synth_sim_netlist.v
+	xelab -d XIL_TIMING -s post_synthesis_simulation \
 		-debug typical \
-		-sdfmax /DUT=netlists/synth_sim_netlist.sdf \
-		-L $(LIBS) \
+		-sdfmax /tb_principal/DUT=netlists/synth_sim_netlist.sdf \
+		$(LIBS) \
 		$(TB_TOP) glbl 	
 	VCD_FILE=waveforms/post_synthesis.vcd xsim \
 			 post_synthesis_simulation \
@@ -97,6 +98,11 @@ all: sim_behavioural
 .timestamp.binary: .timestamp.implementation
 	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output.bit output.bin
 	touch $@
+
+.timestamp.simprims_ver:
+	vivado -mode batch -source ./scripts/make_simprims_ver.tcl 
+	touch $@
+
 
 .PHONY:upload
 upload: .timestamp.binary
