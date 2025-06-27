@@ -25,10 +25,13 @@ IMPL_SIM_SDF =     netlist/impl_netlist.sdf
 IMPL_SIM_NET =     netlist/impl_netlist.v
 IMPL_DESIGN_NET =  netlist/impl_design_netlist.v
 
-# LIBS = -L unisims_ver=sim_lib/unisims_ver    # Simulation fonctionnelle
+# LIBS = -L unisims_ver=sim_lib/unisims_ver      # Simulation fonctionnelle
 LIBS = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
+
 GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
+
 SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRV_VHDL}
+
 define banner
 	@echo -e
 	@tput setaf 2
@@ -80,7 +83,7 @@ all: sim_behavioural
 	touch $@
 
 
-.timestamp.post_synthesis_simulation: .timestamp.synthesis
+.timestamp.post_synthesis_simulation: .timestamp.compile_tb .timestamp.synthesis .timestamp.simprims_ver
 	$(call banner, "Post-Synthesis\ Simulation")
 	@mkdir -p waveforms
 	xvlog -d XIL_TIMING $(GLBL)
@@ -95,6 +98,21 @@ all: sim_behavioural
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
+.timestamp.post_implementation_simulation: .timestamp.compile_tb .timestamp.implementation .timestamp.simprims_ver
+	$(call banner, "Post-Synthesis\ Simulation")
+	@mkdir -p waveforms
+	xvlog -d XIL_TIMING $(GLBL)
+	xvlog -d XIL_TIMING $(LIBS) -sv netlists/impl_sim_netlist.v
+	xelab -d XIL_TIMING -s post_implementation_simulation \
+		-debug typical \
+		-sdfmax /tb_principal/DUT=netlists/synth_sim_netlist.sdf \
+		$(LIBS) \
+		$(TB_TOP) glbl 	
+	VCD_FILE=waveforms/post_implementation.vcd xsim \
+			 post_implementation_simulation \
+			 -tclbatch ./scripts/sim_vcd.tcl
+	touch $@
+
 .timestamp.binary: .timestamp.implementation
 	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output.bit output.bin
 	touch $@
@@ -102,7 +120,6 @@ all: sim_behavioural
 .timestamp.simprims_ver:
 	vivado -mode batch -source ./scripts/make_simprims_ver.tcl 
 	touch $@
-
 
 .PHONY:upload
 upload: .timestamp.binary
@@ -126,8 +143,15 @@ clean:
 	rm -fr waveforms
 	rm -fr netlists
 
+.PHONY: mrproper
+mrproper: clean
+	rm -fr sim_libs
+
 .PHONY: sim_behavioural
 sim_behavioural: .timestamp.behavioural_simulation 
+
+.PHONY: sim_post_synthesis
+sim_post_synthesis: .timestamp.post_synthesis_simulation 
 
 .PHONY: synthesis
 synthesis: .timestamp.synthesis
