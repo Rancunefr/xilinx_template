@@ -7,8 +7,9 @@ foreach f $src {
 }
 read_xdc ${xdc}
 synth_design -top ${top} -part ${part}
-write_verilog -mode timesim -nolib -sdf_anno true -force netlists/synth_sim_netlist.v
-write_sdf -process_corner slow -force netlists/synth_sim_netlist.sdf
-write_verilog -mode design -force netlists/synth_design_netlist.v
+write_verilog -mode timesim -nolib -sdf_anno true -force output/netlists/synth_timesim_netlist.v
+write_sdf -process_corner slow -force output/netlists/synth_timesim_netlist.sdf
+write_verilog -mode design -force output/netlists/synth_design_netlist.v
+write_verilog -mode funcsim -force output/netlists/synth_funcsim_netlist.v
 write_checkpoint -force checkpoints/synth.dcp
 exit 

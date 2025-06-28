@@ -18,16 +18,8 @@ TB_SRC = \
 
 VIVADO_PATH = /tools/Xilinx/2025.1/Vivado
 
-SYNTH_SIM_SDF =    netlist/synth_sim_netlist.sdf
-SYNTH_SIM_NET =    netlist/synth_sim_netlist.v
-SYNTH_DESIGN_NET = netlist/synth_design_netlist.v
-IMPL_SIM_SDF =     netlist/impl_netlist.sdf
-IMPL_SIM_NET =     netlist/impl_netlist.v
-IMPL_DESIGN_NET =  netlist/impl_design_netlist.v
-
-# LIBS = -L unisims_ver=sim_lib/unisims_ver      # Simulation fonctionnelle
-LIBS = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
-
+LIB_UNISIMS_VER  = -L unisims_ver                            # Simulation fonctionnelle
+LIB_SIMPRIMS_VER = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
 GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
 
 SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRV_VHDL}
@@ -40,7 +32,7 @@ define banner
 	@echo -e
 endef
 
-all: sim_behavioural
+all: .timestamp.compile_src
 
 .timestamp.compile_src: ${SRC}
 	$(call banner, "Compiling\ sources")
@@ -56,18 +48,18 @@ all: sim_behavioural
 
 .timestamp.behavioural_simulation: .timestamp.compile_src .timestamp.compile_tb
 	$(call banner, "Behavioural\ Simulation")
-	@mkdir -p waveforms
+	@mkdir -p output/waveforms
 	xelab -d XIL_TIMING -snapshot behavioural_simulation \
 		-debug typical \
 		-top ${TB_TOP} 
-	VCD_FILE=waveforms/behavioural.vcd xsim \
+	VCD_FILE=output/waveforms/behavioural.vcd xsim \
 			 behavioural_simulation \
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
 .timestamp.synthesis: ${SRC} ${XDC}
 	$(call banner, "Synthesis")
-	@mkdir -p netlists
+	@mkdir -p output/netlists
 	@mkdir -p checkpoints
 	vivado -mode batch -nojournal -nolog -notrace \
 		-source ./scripts/synthesis.tcl \
@@ -76,45 +68,72 @@ all: sim_behavioural
 
 .timestamp.implementation:  .timestamp.synthesis 
 	$(call banner, "Implementation")
-	@mkdir -p reports
-	@rm -fr reports/*
+	@mkdir -p output/reports
+	@rm -fr output/reports/*
 	vivado -mode batch -nojournal -nolog -notrace \
 		-source scripts/implementation.tcl 
 	touch $@
 
-
-.timestamp.post_synthesis_simulation: .timestamp.compile_tb .timestamp.synthesis .timestamp.simprims_ver
-	$(call banner, "Post-Synthesis\ Simulation")
-	@mkdir -p waveforms
+.timestamp.synth_timesim: .timestamp.compile_tb .timestamp.synthesis .timestamp.simprims_ver
+	$(call banner, "Post-Synthesis\ Time\ Simulation")
+	@mkdir -p output/waveforms
 	xvlog -d XIL_TIMING $(GLBL)
-	xvlog -d XIL_TIMING $(LIBS) -sv netlists/synth_sim_netlist.v
-	xelab -d XIL_TIMING -s post_synthesis_simulation \
+	xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_timesim_netlist.v
+	xelab -d XIL_TIMING -s snapshot_synth_timesim \
 		-debug typical \
-		-sdfmax /tb_principal/DUT=netlists/synth_sim_netlist.sdf \
-		$(LIBS) \
+		-sdfmax /tb_principal/DUT=output/netlists/synth_timesim_netlist.sdf \
+		$(LIB_SIMPRIMS_VER) \
 		$(TB_TOP) glbl 	
-	VCD_FILE=waveforms/post_synthesis.vcd xsim \
-			 post_synthesis_simulation \
+	VCD_FILE=output/waveforms/synth_timesim.vcd xsim \
+			 snapshot_synth_timesim \
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
-.timestamp.post_implementation_simulation: .timestamp.compile_tb .timestamp.implementation .timestamp.simprims_ver
-	$(call banner, "Post-Synthesis\ Simulation")
-	@mkdir -p waveforms
+.timestamp.impl_timesim: .timestamp.compile_tb .timestamp.implementation .timestamp.simprims_ver
+	$(call banner, "Post-Implementation\ \ Time\ Simulation")
+	@mkdir -p output/waveforms
 	xvlog -d XIL_TIMING $(GLBL)
-	xvlog -d XIL_TIMING $(LIBS) -sv netlists/impl_sim_netlist.v
-	xelab -d XIL_TIMING -s post_implementation_simulation \
+	xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_timesim_netlist.v
+	xelab -d XIL_TIMING -s snapshot_impl_timesim \
 		-debug typical \
-		-sdfmax /tb_principal/DUT=netlists/synth_sim_netlist.sdf \
-		$(LIBS) \
+		-sdfmax /tb_principal/DUT=output/netlists/synth_timesim_netlist.sdf \
+		$(LIB_SIMPRIMS_VER) \
 		$(TB_TOP) glbl 	
-	VCD_FILE=waveforms/post_implementation.vcd xsim \
-			 post_implementation_simulation \
+	VCD_FILE=output/waveforms/impl_timesim.vcd xsim \
+			 snapshot_impl_timesim \
+			 -tclbatch ./scripts/sim_vcd.tcl
+	touch $@
+
+.timestamp.synth_funcsim: .timestamp.compile_tb .timestamp.synthesis
+	$(call banner, "Post-Synthesis\ Func.\ Simulation")
+	@mkdir -p output/waveforms
+	xvlog -d XIL_TIMING $(GLBL)
+	xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_funcsim_netlist.v
+	xelab -d XIL_TIMING -s snapshot_synth_funcsim \
+		-debug typical \
+		$(LIB_UNISIMS_VER) \
+		$(TB_TOP) glbl 	
+	VCD_FILE=output/waveforms/synth_funcsim.vcd xsim \
+			 snapshot_synth_funcsim \
+			 -tclbatch ./scripts/sim_vcd.tcl
+	touch $@
+
+.timestamp.impl_funcsim: .timestamp.compile_tb .timestamp.implementation
+	$(call banner, "Post-Implementation\ Func.\ Simulation")
+	@mkdir -p output/waveforms
+	xvlog -d XIL_TIMING $(GLBL)
+	xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_funcsim_netlist.v
+	xelab -d XIL_TIMING -s snapshot_impl_funcsim \
+		-debug typical \
+		$(LIB_UNISIMS_VER) \
+		$(TB_TOP) glbl 	
+	VCD_FILE=output/waveforms/impl_funcsim.vcd xsim \
+			 snapshot_impl_funcsim \
 			 -tclbatch ./scripts/sim_vcd.tcl
 	touch $@
 
 .timestamp.binary: .timestamp.implementation
-	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output.bit output.bin
+	vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output/output.bit output/output.bin
 	touch $@
 
 .timestamp.simprims_ver:
@@ -133,31 +152,38 @@ clean:
 	rm -f .timestamp.*
 	rm -f *.wdb
 	rm -f clockInfo.txt
-	rm -f output.bin
-	rm -f output.bit
-	rm -f output.prm
+	rm -f xsim.ini
+	rm -f xsim.ini.bak
+	rm -f xsim.ini.map
 	rm -fr xsim.dir
 	rm -fr .Xil
-	rm -fr reports
+	rm -fr output
 	rm -fr checkpoints
-	rm -fr waveforms
-	rm -fr netlists
 
 .PHONY: mrproper
 mrproper: clean
 	rm -fr sim_libs
 
-.PHONY: sim_behavioural
-sim_behavioural: .timestamp.behavioural_simulation 
+.PHONY: sim
+sim: .timestamp.behavioural_simulation 
 
-.PHONY: sim_post_synthesis
-sim_post_synthesis: .timestamp.post_synthesis_simulation 
+.PHONY: synth_timesim
+synth_timesim: .timestamp.synth_timesim
 
-.PHONY: synthesis
-synthesis: .timestamp.synthesis
+.PHONY: impl_timesim
+impl_timesim: .timestamp.impl_timesim 
 
-.PHONY: implementation
-implementation: .timestamp.implementation
+.PHONY: impl_funcsim
+impl_funcsim: .timestamp.impl_funcsim 
+
+.PHONY: synth_funcsim
+synth_funcsim: .timestamp.synth_funcsim 
+
+.PHONY: synth
+synth: .timestamp.synthesis
+
+.PHONY: impl
+impl: .timestamp.implementation
 	
 .PHONY: binary
 binary: .timestamp.binary
