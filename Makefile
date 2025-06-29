@@ -160,8 +160,8 @@ clean:
 	rm -fr output
 	rm -fr checkpoints
 
-.PHONY: mrproper
-mrproper: clean
+.PHONY: distclean
+distclean: clean
 	rm -fr sim_libs
 
 .PHONY: sim
