@@ -53,7 +53,7 @@ all: src
 	@touch $@
 
 .timestamp.behavioural_simulation: .timestamp.compile_src .timestamp.compile_tb
-	$(call banner, "Behavioural\ Simulation")
+	@$(call banner, "Behavioural\ Simulation")
 	@mkdir -p output/waveforms
 	@xelab -d XIL_TIMING -snapshot behavioural_simulation \
 		-debug typical \
@@ -73,7 +73,7 @@ all: src
 	@touch $@
 
 .timestamp.implementation:  .timestamp.synthesis 
-	$(call banner, "Implementation")
+	@$(call banner, "Implementation")
 	@mkdir -p output/reports
 	@rm -fr output/reports/*
 	@vivado -mode batch -nojournal -nolog -notrace \
@@ -81,7 +81,7 @@ all: src
 	@touch $@
 
 .timestamp.synth_timesim: .timestamp.compile_tb .timestamp.synthesis .timestamp.simprims_ver
-	$(call banner, "Post-Synthesis\ Time\ Simulation")
+	@$(call banner, "Post-Synthesis\ Time\ Simulation")
 	@mkdir -p output/waveforms
 	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
 	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_timesim_netlist.v | ${HL}
@@ -96,7 +96,7 @@ all: src
 	@touch $@
 
 .timestamp.impl_timesim: .timestamp.compile_tb .timestamp.implementation .timestamp.simprims_ver
-	$(call banner, "Post-Implementation\ \ Time\ Simulation")
+	@$(call banner, "Post-Implementation\ \ Time\ Simulation")
 	@mkdir -p output/waveforms
 	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
 	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_timesim_netlist.v | ${HL}
@@ -111,7 +111,7 @@ all: src
 	@touch $@
 
 .timestamp.synth_funcsim: .timestamp.compile_tb .timestamp.synthesis
-	$(call banner, "Post-Synthesis\ Func.\ Simulation")
+	@$(call banner, "Post-Synthesis\ Func.\ Simulation")
 	@mkdir -p output/waveforms
 	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
 	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_funcsim_netlist.v | ${HL}
@@ -125,7 +125,7 @@ all: src
 	@touch $@
 
 .timestamp.impl_funcsim: .timestamp.compile_tb .timestamp.implementation
-	$(call banner, "Post-Implementation\ Func.\ Simulation")
+	@$(call banner, "Post-Implementation\ Func.\ Simulation")
 	@mkdir -p output/waveforms
 	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
 	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_funcsim_netlist.v | ${HL}
@@ -139,15 +139,18 @@ all: src
 	@touch $@
 
 .timestamp.binary: .timestamp.implementation
+	@$(call banner, "Building\ binary")
 	@vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output/output.bit output/output.bin | ${HL}
 	@touch $@
 
 .timestamp.simprims_ver:
+	@$(call banner, "Building\ simprims_ver")
 	@vivado -mode batch -source ./scripts/make_simprims_ver.tcl | ${HL} 
 	@touch $@
 
 .PHONY:upload
 upload: .timestamp.binary
+	@$(call banner, "Uploading ...")
 	@vivado -mode batch -source ./scripts/upload.tcl | ${HL}
 
 .PHONY: clean
