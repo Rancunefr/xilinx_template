@@ -38,7 +38,7 @@ HL = awk '{\
   gsub("INFO",    "\033[97m&\033[0m");\
   print }'
 
-all: .timestamp.compile_src
+all: src
 
 .timestamp.compile_src: ${SRC}
 	@$(call banner, "Compiling\ sources")
@@ -193,3 +193,10 @@ impl: .timestamp.implementation
 	
 .PHONY: binary
 binary: .timestamp.binary
+
+.PHONY: tb
+tb: .timestamp.compile_tb
+
+.PHONY: src
+src: .timestamp.compile_src
+
