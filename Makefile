@@ -1,22 +1,4 @@
-PART = xc7a35tcpg236-1
-XDC = ./constr/Basys-3-Master.xdc 
-
-TOP = principal
-TB_TOP = tb_principal
-
-SRC_SVLOG = \
-	./src/principal.sv \
-	./src/impulse.sv \
-	./src/counter.sv
-
-SRC_VHDL =
-
-SRC_VLG = 
-
-TB_SRC = \
-	./tb/tb_principal.sv \
-
-VIVADO_PATH = /tools/Xilinx/2025.1/Vivado
+include settings.mk
 
 LIB_UNISIMS_VER  = -L unisims_ver                            # Simulation fonctionnelle
 LIB_SIMPRIMS_VER = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
