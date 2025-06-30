@@ -38,11 +38,11 @@ It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every deve
 
 | Tool                | Version tested | Notes                                                                  |
 |---------------------|----------------|------------------------------------------------------------------------|
-| Vivado Design Suite | 2025.&         | Needs the **xvlog/xelab/xsim** tools for simulation.                   |
+| Vivado Design Suite | 2025.1         | Needs the **xvlog/xelab/xsim** tools for simulation.                   |
 | GNU make            | 4.0 +          | Most Linux distros.                                                    |
 | Bash                | 4.x            | The Makefile relies on simple Bash self‑printing.                      |
 | Awk                 | 5.x            | Needed for errors and warning hilighting.                              |
-| Gtkwave             |                | You will need it for simulation visualisation.                         |
+| Gtkwave             |                | Need for waveforms visualisation.                                      |
 
 > **Tip** – Windows users can run the flow unchanged under **WSL2** or Git‑Bash as long as Vivado is in `$PATH`.
 
@@ -88,14 +88,19 @@ All higher‑level targets are “pseudo‑PHONY”; they expand into internal `
 Open the `settings.mk` file – it holds the only variables you usually edit:
 
 ```make
-PART        = xc7a35tcpg236-1          # FPGA device (Basys‑3)
-XDC         = ./constr/Basys-3-Master.xdc
-TOP         = principal                # RTL top entity
-TB_TOP      = tb_principal             # Test‑bench top
-SRC_SVLOG   = ./src/principal.sv               ./src/impulse.sv               ./src/counter.sv
-SRC_VHDL    =
-SRC_VLG     =
-TB_SRC      = ./tb/tb_principal.sv
+PART        = xc7a35tcpg236-1               # FPGA device (Basys‑3)
+XDC         = ./constr/Basys-3-Master.xdc   # Constraints
+
+TOP         = principal                     # Project top entity
+TB_TOP      = tb_principal                  # Test‑bench top
+
+SRC_SVLOG   = ./src/principal.sv \          # SystemVerilog source files
+                ./src/impulse.sv \
+                ./src/counter.sv
+SRC_VHDL    =                               # VHDL source files
+SRC_VLG     =                               # Verilog source files
+
+TB_SRC      = ./tb/tb_principal.sv          # TestBench source file (SystemVerilog)
 ```
 
 * **PART** and **XDC** must match your board or target device.  
