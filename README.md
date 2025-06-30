@@ -11,7 +11,7 @@ It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every deve
 4. [Typical targets](#typical-targets)  
 5. [Configuration](#configuration)  
 6. [Example 1 : Design workflow](#Example-1-:-Design-workflow)
-7. [Example 2 : Simulation Workflow 5Behavioural)](#Example-2-:-Simulation-workflow-(-behavioural-))
+7. [Example 2 : Simulation Workflow (Behavioural)](#Example-2-:-Simulation-workflow-(-behavioural-))
 8. [Example 3 : Post synthesis simulation worklow](#Example-3-:-Post-synthesis-time-simulation-workflow)
 9. [Troubleshooting](#troubleshooting)  
 10. [License](#license)
