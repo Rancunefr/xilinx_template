@@ -146,10 +146,12 @@ clean:
 	rm -f xsim.ini
 	rm -f xsim.ini.bak
 	rm -f xsim.ini.map
+	rm -f .cxl.*
 	rm -fr xsim.dir
 	rm -fr .Xil
 	rm -fr output
 	rm -fr checkpoints
+	rm -fr .cxl
 
 .PHONY: distclean
 distclean: clean
