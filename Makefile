@@ -130,10 +130,31 @@ all: src
 	@vivado -mode batch -source ./scripts/make_simprims_ver.tcl | ${HL} 
 	@touch $@
 
-.PHONY:upload
+.PHONY: upload
 upload: .timestamp.binary
 	@$(call banner, "Uploading ...")
 	@vivado -mode batch -source ./scripts/upload.tcl | ${HL}
+
+.PHONY: ip_update_catalog
+ip_update_catalog:
+	@$(call banner, "Updating IP catalog ...")
+	@mkdir -p ./ip
+	@rm -f ./ip/catalog.txt
+	@vivado -mode batch \
+		-source ./scripts/ip_update_catalog.tcl \
+		-tclargs ${PART} | ${HL}
+
+.PHONY: ip_create_config
+ip_create_config:
+	@if [ -z "$(IP_NAME)" ]; then \
+		echo "Usage : IP_NAME=\"name_of_the_ip\" make ip_create_config"; \
+	else \
+		echo "Creating IP config for $(IP_NAME) ..." ; \
+		mkdir -p ./ip/config_templates ; \
+		vivado -mode batch -source ./scripts/ip_create_config.tcl \
+		-tclargs ${PART} ${IP_NAME} ; \
+	fi
+
 
 .PHONY: clean
 clean:
