@@ -14,6 +14,6 @@ SRC_VHDL =
 SRC_VLG = 
 
 TB_SRC = \
-        ./tb/tb_principal.sv
+        ./src_tb/tb_principal.sv
 
 VIVADO_PATH = /usr/local/Xilinx/Vivado/2024.2

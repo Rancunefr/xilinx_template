@@ -162,6 +162,22 @@ ip_create_config:
 			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
 	fi
 
+.PHONY: ip_create_instances
+ip_create_instances:
+	@$(call banner, "Creating IP instances ...")
+	@mkdir -p ./ip
+	@if [ -d ./ip/configs ]; then \
+		for cfg in ./ip/configs/*; do \
+			[ -f "$$cfg" ] || continue; \
+			inst=$$(basename $$cfg); \
+			echo " >> Generating $$inst"; \
+			mkdir -p ./ip/$$inst ; \
+			$(VIVADO) -source ./scripts/ip_generate_instance.tcl \
+				-tclargs ${PART} $$cfg $$inst |& $(HL) ; \
+		done; \
+	else \
+		echo "No ./ip/configs directory"; \
+	fi
 
 .PHONY: clean
 clean:

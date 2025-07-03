@@ -1,0 +1,3 @@
+clk_wiz
+CONFIG.USE_LOCKED : true
+CONFIG.USE_RESET : true
