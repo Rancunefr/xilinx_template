@@ -22,3 +22,5 @@ foreach line [split $props_str "\n"] {
 }
 
 close $fp
+close_project -delete
+exit
