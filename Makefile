@@ -1,5 +1,9 @@
 include settings.mk
 
+# Use bash for all recipe commands. The Makefile relies on bash features such
+# as the `|&` pipe operator which are not available in POSIX `sh`.
+SHELL := /usr/bin/env bash
+
 LIB_UNISIMS_VER  = -L unisims_ver                            # Simulation fonctionnelle
 LIB_SIMPRIMS_VER = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
 GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
