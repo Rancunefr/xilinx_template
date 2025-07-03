@@ -159,7 +159,7 @@ ip_create_config:
 		echo "Creating IP config for $(IP_NAME) ..." ; \
 		mkdir -p ./ip/config_templates ; \
 		$(VIVADO) -source ./scripts/ip_create_config.tcl \
-			-tclargs ${PART} ${IP_NAME} |& $(HL)
+			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
 	fi
 
 
