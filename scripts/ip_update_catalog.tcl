@@ -1,6 +1,6 @@
 set part_name [lindex $argv 0]
 
-create_project -part $part_name -force i-in_memory tmp_ip_list  
+create_project -part $part_name -force -in_memory tmp_ip_list  
 
 update_ip_catalog
 set ip_list [get_ipdefs]
@@ -28,8 +28,11 @@ foreach ip $ip_list {
 
 }
 
-close $fp
-
 #DEBUG
 #set ip [get_ipdefs xilinx.com:ip:clk_wiz:6.0]
 #report_property $ip
+
+close $fp
+close_project -delete
+exit
+
