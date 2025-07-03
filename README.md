@@ -43,7 +43,7 @@ It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every deve
 git clone <repo‑url> my_fpga_proj
 cd my_fpga_proj
 
-# 2. Adapt project variables (device, RTL list, top level) in Makefile
+# 2. Adapt project variables (device, RTL list, top level) in settings.mk
 $EDITOR settings.mk
 
 # 3. Build everything from RTL to bitstream
