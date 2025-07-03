@@ -8,7 +8,7 @@ LIB_UNISIMS_VER  = -L unisims_ver                            # Simulation foncti
 LIB_SIMPRIMS_VER = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
 GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
 
-SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRV_VHDL}
+SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRC_VHDL}
 
 VIVADO = vivado -mode batch -nojournal -nolog -notrace 
 XVLOG = xvlog --nolog -d XIL_TIMING
