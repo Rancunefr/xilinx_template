@@ -27,7 +27,7 @@ initial begin
     nrst = 0 ;
     #20 ;
     nrst = 1 ;
- end ;     
+end
 
     
 endmodule
