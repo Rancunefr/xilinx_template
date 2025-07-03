@@ -6,6 +6,11 @@ GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
 
 SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRV_VHDL}
 
+VIVADO = vivado -mode batch -nojournal -nolog -notrace 
+XVLOG = xvlog --nolog -d XIL_TIMING
+XELAB = xelab --nolog -d XIL_TIMING
+XSIM = xsim --nolog 
+
 define banner
 	@echo -e
 	@tput setaf 2
@@ -24,125 +29,123 @@ all: src
 
 .timestamp.compile_src: ${SRC}
 	@$(call banner, "Compiling\ sources")
-	@if [ -n "${SRC_SVLOG}" ]; then xvlog -d XIL_TIMING --sv ${SRC_SVLOG} | ${HL}; fi
-	@if [ -n "${SRC_VLOG}" ]; then xvlog -d XIL_TIMING ${SRC_VLOG} | ${HL}; fi
-	@if [ -n "${SRC_VHDL}" ]; then xvhdl -d XIL_TIMING ${SRC_VHDL} | ${HL}; fi
+	@if [ -n "${SRC_SVLOG}" ]; then $(XVLOG) --sv ${SRC_SVLOG} |& ${HL}; fi
+	@if [ -n "${SRC_VLOG}" ]; then $(XVLOG) ${SRC_VLOG} |& ${HL}; fi
+	@if [ -n "${SRC_VHDL}" ]; then xvhdl -d XIL_TIMING ${SRC_VHDL} |& ${HL}; fi
 	@touch $@
 
 .timestamp.compile_tb: ${TB_SRC}
 	@$(call banner, "Compiling\ testbench")
-	@xvlog -d XIL_TIMING --sv ${TB_SRC} | ${HL}
+	@$(XVLOG) --sv ${TB_SRC} |& ${HL}
 	@touch $@
 
 .timestamp.behavioural_simulation: .timestamp.compile_src .timestamp.compile_tb
 	@$(call banner, "Behavioural\ Simulation")
 	@mkdir -p output/waveforms
-	@xelab -d XIL_TIMING -snapshot behavioural_simulation \
+	@$(XELAB) -snapshot behavioural_simulation \
 		-debug typical \
-		-top ${TB_TOP} | ${HL}
-	@VCD_FILE=output/waveforms/behavioural.vcd xsim \
+		-top ${TB_TOP} |& ${HL}
+	@VCD_FILE=output/waveforms/behavioural.vcd $(XSIM) \
 			 behavioural_simulation \
-			 -tclbatch ./scripts/sim_vcd.tcl | ${HL}
+			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	touch $@
 
 .timestamp.synthesis: ${SRC} ${XDC}
 	@$(call banner, "Synthesis")
 	@mkdir -p output/netlists
 	@mkdir -p checkpoints
-	@vivado -mode batch -nojournal -nolog -notrace \
-		-source ./scripts/synthesis.tcl \
-		-tclargs $(PART) $(TOP) $(XDC) $(SRC) | ${HL}
+	@$(VIVADO) -source ./scripts/synthesis.tcl \
+		-tclargs $(PART) $(TOP) $(XDC) $(SRC) |& ${HL}
 	@touch $@
 
 .timestamp.implementation:  .timestamp.synthesis 
 	@$(call banner, "Implementation")
 	@mkdir -p output/reports
 	@rm -fr output/reports/*
-	@vivado -mode batch -nojournal -nolog -notrace \
-		-source scripts/implementation.tcl | ${HL}
+	@$(VIVADO) -source scripts/implementation.tcl |& ${HL}
 	@touch $@
 
 .timestamp.synth_timesim: .timestamp.compile_tb .timestamp.synthesis .timestamp.simprims_ver
 	@$(call banner, "Post-Synthesis\ Time\ Simulation")
 	@mkdir -p output/waveforms
-	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
-	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_timesim_netlist.v | ${HL}
-	@xelab -d XIL_TIMING -s snapshot_synth_timesim \
+	@$(XVLOG) $(GLBL) |& ${HL}
+	@$(XVLOG) $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_timesim_netlist.v |& ${HL}
+	@$(XELAB) -s snapshot_synth_timesim \
 		-debug typical \
 		-sdfmax /tb_principal/DUT=output/netlists/synth_timesim_netlist.sdf \
 		$(LIB_SIMPRIMS_VER) \
-		$(TB_TOP) glbl | ${HL} 	
-	@VCD_FILE=output/waveforms/synth_timesim.vcd xsim \
+		$(TB_TOP) glbl |& ${HL} 	
+	@VCD_FILE=output/waveforms/synth_timesim.vcd $(XSIM) \
 			 snapshot_synth_timesim \
-			 -tclbatch ./scripts/sim_vcd.tcl | ${HL}
+			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	@touch $@
 
 .timestamp.impl_timesim: .timestamp.compile_tb .timestamp.implementation .timestamp.simprims_ver
 	@$(call banner, "Post-Implementation\ \ Time\ Simulation")
 	@mkdir -p output/waveforms
-	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
-	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_timesim_netlist.v | ${HL}
-	@xelab -d XIL_TIMING -s snapshot_impl_timesim \
+	@$(XVLOG) $(GLBL) |& ${HL}
+	@$(XVLOG) $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_timesim_netlist.v |& ${HL}
+	@$(XELAB) -s snapshot_impl_timesim \
 		-debug typical \
 		-sdfmax /tb_principal/DUT=output/netlists/synth_timesim_netlist.sdf \
 		$(LIB_SIMPRIMS_VER) \
-		$(TB_TOP) glbl | ${HL} 	
-	@VCD_FILE=output/waveforms/impl_timesim.vcd xsim \
+		$(TB_TOP) glbl |& ${HL} 	
+	@VCD_FILE=output/waveforms/impl_timesim.vcd $(XSIM) \
 			 snapshot_impl_timesim \
-			 -tclbatch ./scripts/sim_vcd.tcl | ${HL}
+			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	@touch $@
 
 .timestamp.synth_funcsim: .timestamp.compile_tb .timestamp.synthesis
 	@$(call banner, "Post-Synthesis\ Func.\ Simulation")
 	@mkdir -p output/waveforms
-	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
-	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_funcsim_netlist.v | ${HL}
-	@xelab -d XIL_TIMING -s snapshot_synth_funcsim \
+	@$(XVLOG) $(GLBL) |& ${HL}
+	@$(XVLOG) $(LIB_SIMPRIMS_VER) -sv output/netlists/synth_funcsim_netlist.v |& ${HL}
+	@$(XELAB) -s snapshot_synth_funcsim \
 		-debug typical \
 		$(LIB_UNISIMS_VER) \
-		$(TB_TOP) glbl | ${HL} 	
-	@VCD_FILE=output/waveforms/synth_funcsim.vcd xsim \
+		$(TB_TOP) glbl |& ${HL} 	
+	@VCD_FILE=output/waveforms/synth_funcsim.vcd $(XSIM) \
 			 snapshot_synth_funcsim \
-			 -tclbatch ./scripts/sim_vcd.tcl | ${HL}
+			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	@touch $@
 
 .timestamp.impl_funcsim: .timestamp.compile_tb .timestamp.implementation
 	@$(call banner, "Post-Implementation\ Func.\ Simulation")
 	@mkdir -p output/waveforms
-	@xvlog -d XIL_TIMING $(GLBL) | ${HL}
-	@xvlog -d XIL_TIMING $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_funcsim_netlist.v | ${HL}
-	@xelab -d XIL_TIMING -s snapshot_impl_funcsim \
+	@$(XVLOG) $(GLBL) |& ${HL}
+	@$(XVLOG) $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_funcsim_netlist.v |& ${HL}
+	@$(XELAB) -s snapshot_impl_funcsim \
 		-debug typical \
 		$(LIB_UNISIMS_VER) \
-		$(TB_TOP) glbl | ${HL} 	
-	@VCD_FILE=output/waveforms/impl_funcsim.vcd xsim \
+		$(TB_TOP) glbl |& ${HL} 	
+	@VCD_FILE=output/waveforms/impl_funcsim.vcd $(XSIM) \
 			 snapshot_impl_funcsim \
-			 -tclbatch ./scripts/sim_vcd.tcl | ${HL}
+			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	@touch $@
 
 .timestamp.binary: .timestamp.implementation
 	@$(call banner, "Building\ binary")
-	@vivado -mode batch -source ./scripts/make_binary.tcl -tclargs output/output.bit output/output.bin | ${HL}
+	@$(VIVADO) -source ./scripts/make_binary.tcl \
+		-tclargs output/output.bit output/output.bin |& ${HL}
 	@touch $@
 
 .timestamp.simprims_ver:
 	@$(call banner, "Building\ simprims_ver")
-	@vivado -mode batch -source ./scripts/make_simprims_ver.tcl | ${HL} 
+	@$(VIVADO) -source ./scripts/make_simprims_ver.tcl |& ${HL} 
 	@touch $@
 
 .PHONY: upload
 upload: .timestamp.binary
 	@$(call banner, "Uploading ...")
-	@vivado -mode batch -source ./scripts/upload.tcl | ${HL}
+	@$(VIVADO) -source ./scripts/upload.tcl |& $(HL)
 
 .PHONY: ip_update_catalog
 ip_update_catalog:
 	@$(call banner, "Updating IP catalog ...")
 	@mkdir -p ./ip
 	@rm -f ./ip/catalog.txt
-	@vivado -mode batch \
-		-source ./scripts/ip_update_catalog.tcl \
-		-tclargs ${PART} | ${HL}
+	@$(VIVADO) -source ./scripts/ip_update_catalog.tcl \
+		-tclargs ${PART} |& ${HL}
 
 .PHONY: ip_create_config
 ip_create_config:
@@ -151,8 +154,8 @@ ip_create_config:
 	else \
 		echo "Creating IP config for $(IP_NAME) ..." ; \
 		mkdir -p ./ip/config_templates ; \
-		vivado -mode batch -source ./scripts/ip_create_config.tcl \
-		-tclargs ${PART} ${IP_NAME} ; \
+		$(VIVADO) -source ./scripts/ip_create_config.tcl \
+			-tclargs ${PART} ${IP_NAME} ; |& $(HL)\
 	fi
 
 
