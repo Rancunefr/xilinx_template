@@ -91,7 +91,7 @@ all: src
 	@$(XVLOG) $(LIB_SIMPRIMS_VER) -sv output/netlists/impl_timesim_netlist.v |& ${HL}
 	@$(XELAB) -s snapshot_impl_timesim \
 		-debug typical \
-		-sdfmax /tb_principal/DUT=output/netlists/synth_timesim_netlist.sdf \
+		-sdfmax /tb_principal/DUT=output/netlists/impl_timesim_netlist.sdf \
 		$(LIB_SIMPRIMS_VER) \
 		$(TB_TOP) glbl |& ${HL} 	
 	@VCD_FILE=output/waveforms/impl_timesim.vcd $(XSIM) \
