@@ -4,18 +4,6 @@ A minimal yet complete template for building, simulating, implementing and progr
 Xilinx FPGAs (e.g. the **Basys‑3** board) from the command line with **GNU Make**.  
 It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every development step can be reproduced with a single shell command and is automatically **time‑stamped for incremental builds**.
 
-## Table of contents
-1. [Folder layout](#folder-layout)  
-2. [Prerequisites](#prerequisites)  
-3. [Quick start](#quick-start)  
-4. [Typical targets](#typical-targets)  
-5. [Configuration](#configuration)  
-6. [Example 1 : Design workflow](#Example-1-:-Design-workflow)
-7. [Example 2 : Simulation Workflow 5Behavioural)](#Example-2-:-Simulation-workflow-(-behavioural-))
-8. [Example 3 : Post synthesis simulation worklow](#Example-3-:-Post-synthesis-time-simulation-workflow)
-9. [Troubleshooting](#troubleshooting)  
-10. [License](#license)
-
 ---
 
 ## Folder layout
@@ -117,7 +105,7 @@ make src tb
 
 # 2. Implementation & timing closure
 make impl
-firefox output/reports/impl_report_timing_summary.rpt &
+$EDITOR output/reports/impl_report_timing_summary.rpt &
 
 # 3. Final binary file when timing is satisfied
 make binary
