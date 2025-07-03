@@ -31,7 +31,7 @@ It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every deve
 | Vivado Design Suite | 2025.1         | Needs the **xvlog/xelab/xsim** tools for simulation.                   |
 | GNU make            | 4.0 +          | Most Linux distros.                                                    |
 | Bash                | 4.x            | The Makefile relies on simple Bash self‑printing.                      |
-| Awk                 | 5.x            | Needed for errors and warning hilighting.                              |
+| Awk                 | 5.x            | Needed for errors and warning highlighting.                              |
 | Gtkwave             |                | Need for waveforms visualisation.                                      |
 
 > **Tip** – Windows users can run the flow unchanged under **WSL2** or Git‑Bash as long as Vivado is in `$PATH`.
