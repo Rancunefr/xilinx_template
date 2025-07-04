@@ -6,7 +6,7 @@ SHELL := /usr/bin/env bash
 
 LIB_UNISIMS_VER  = -L unisims_ver                            # Simulation fonctionnelle
 LIB_SIMPRIMS_VER = -L simprims_ver=sim_libs/simprims_ver     # Simulation temporelle
-GLBL = $(VIVADO_PATH)/data/verilog/src/glbl.v
+GLBL = "${VIVADO_PATH}/data/verilog/src/glbl.v"
 
 SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRC_VHDL}
 
@@ -59,7 +59,7 @@ all: src
 	@mkdir -p output/netlists
 	@mkdir -p checkpoints
 	@$(VIVADO) -source ./scripts/synthesis.tcl \
-		-tclargs $(PART) $(TOP) $(XDC) $(SRC) |& ${HL}
+		-tclargs $(PART) $(TOP) $(XDC) $(SRC) $(SRC_IP) |& ${HL}
 	@touch $@
 
 .timestamp.implementation:  .timestamp.synthesis 
@@ -171,7 +171,7 @@ ip_create_instances:
 			[ -f "$$cfg" ] || continue; \
 			inst=$$(basename $$cfg); \
 			echo " >> Generating $$inst"; \
-			mkdir -p ./ip/$$inst ; \
+			rm -fr ./ip/$$inst ; \
 			$(VIVADO) -source ./scripts/ip_generate_instance.tcl \
 				-tclargs ${PART} $$cfg $$inst |& $(HL) ; \
 		done; \

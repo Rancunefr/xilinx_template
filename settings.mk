@@ -13,7 +13,9 @@ SRC_VHDL =
 
 SRC_VLG = 
 
-TB_SRC = \
-        ./tb/tb_principal.sv
+SRC_IP = ./ip/clocky/clocky.xci 
 
-VIVADO_PATH = /usr/local/Xilinx/Vivado/2024.2
+TB_SRC = ./tb/tb_principal.sv
+
+VIVADO_PATH = /tools/Xilinx/2025.1/Vivado
+

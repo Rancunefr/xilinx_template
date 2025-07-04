@@ -6,7 +6,7 @@ puts "part : $part_name"
 puts "cfg_file : $cfg_file"
 puts "inst_name : $inst_name"
 
-create_project -part $part_name -force -in_memory tmp_ip_proj
+set_part $part_name
 
 # Read config file
 set f [open $cfg_file r]
@@ -14,11 +14,15 @@ set lines [split [read $f] "\n"]
 close $f
 
 set ip_name [string trim [lindex $lines 0]]
+puts "ip_name : $ip_name"
 
-create_ip -name $ip_name \
+create_ip \
+	-name $ip_name \
 	-vendor xilinx.com \
 	-library ip \
 	-version "*" \
+	-dir ./ip \
+	-force \
 	-module_name $inst_name 
 
 # Apply configuration lines
@@ -32,15 +36,9 @@ foreach line [lrange $lines 1 end] {
     }
 }
 
-generate_target all [get_ips $inst_name]
+generate_target -force all [get_ips $inst_name]
+synth_ip [get_ips $inst_name] -force
+write_ip_tcl -force -multiple_files [get_ips]
 
-# write_ip -force [get_ips clocky]
 
-export_ip_user_files \
-	-ip_user_files_dir ./src_ip \
-	-ipstatic_source_dir ./src_ip/$inst_name/static \
-	-of_objects [get_ips clocky] \
-	-force
-
-close_project -delete
 exit

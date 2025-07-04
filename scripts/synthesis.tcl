@@ -1,7 +1,9 @@
 set part [lindex $argv 0]
 set top  [lindex $argv 1]
-set xdc  [lindex $argv 2]
-set src  [lrange $argv 3 end]
+set src  [lrange $argv 2 end]
+
+set_part $part
+
 foreach f $src {
     set ext [string tolower [file extension $f]]
     switch -- $ext {
@@ -11,13 +13,20 @@ foreach f $src {
         ".sv" {
             read_verilog -sv $f
         }
+        ".xdc" {
+            read_xdc $f
+        }
+        ".xci" {
+			read_ip $f
+			#read_xdc ./ip/clocky/clocky.xdc
+			#read_xdc ./ip/clocky/clocky_board.xdc
+		}
         default {
             read_verilog $f
         }
     }
 }
-read_xdc ${xdc}
-synth_design -top ${top} -part ${part}
+synth_design -top ${top} -part ${part} -include_dirs {./ip/clocky} 
 write_verilog -mode timesim -nolib -sdf_anno true -force output/netlists/synth_timesim_netlist.v
 write_sdf -process_corner slow -force output/netlists/synth_timesim_netlist.sdf
 write_verilog -mode design -force output/netlists/synth_design_netlist.v
