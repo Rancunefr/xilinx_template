@@ -29,6 +29,8 @@ HL = awk '{\
   gsub("INFO",    "\033[97m&\033[0m");\
   print }'
 
+IP_CONFIGS = $(wildcard ip/configs/*)
+
 all: src
 
 .timestamp.compile_src: ${SRC}
@@ -162,8 +164,7 @@ ip_create_config:
 			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
 	fi
 
-.PHONY: ip_generate_instances
-ip_generate_instances:
+.timestamp.ip_generate_instances: $(IP_CONFIGS)
 	@$(call banner, "Creating IP instances ...")
 	@mkdir -p ./ip
 	@if [ -d ./ip/configs ]; then \
@@ -178,6 +179,7 @@ ip_generate_instances:
 	else \
 		echo "No ./ip/configs directory"; \
 	fi
+	@touch $@
 
 .PHONY: clean
 clean:
@@ -231,3 +233,5 @@ tb: .timestamp.compile_tb
 .PHONY: src
 src: .timestamp.compile_src
 
+.PHONY: ip_generate_instances
+ip_generate_instances: .timestamp.ip_generate_instances 
