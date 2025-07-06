@@ -143,7 +143,7 @@ all: src
 .PHONY: upload
 upload: .timestamp.binary
 	@$(call banner, "Uploading ...")
-	@$(VIVADO) -source ./scripts/upload.tcl |& $(HL)
+	@$(VIVADO) -source ./scripts/upload.tcl |& ${HL}
 
 .PHONY: ip_update_catalog
 ip_update_catalog:
@@ -161,7 +161,7 @@ ip_create_config:
 		echo "Creating IP config template for $(IP_NAME) ..." ; \
 		mkdir -p ./ip/config_templates ; \
 		$(VIVADO) -source ./scripts/ip_create_template.tcl \
-			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
+			-tclargs ${PART} ${IP_NAME} |& ${HL} ;\
 	fi
 
 .timestamp.ip_generate_instances: $(IP_CONFIGS)
@@ -174,7 +174,7 @@ ip_create_config:
 			echo " >> Generating $$inst"; \
 			rm -fr ./ip/$$inst ; \
 			$(VIVADO) -source ./scripts/ip_generate_instance.tcl \
-				-tclargs ${PART} $$cfg $$inst |& $(HL) ; \
+				-tclargs ${PART} $$cfg $$inst |& ${HL} ; \
 		done; \
 	else \
 		echo "No ./ip/configs directory"; \
@@ -183,21 +183,21 @@ ip_create_config:
 
 .PHONY: clean
 clean:
-	rm -f *.log
-	rm -f *.pb
-	rm -f *.jou
-	rm -f .timestamp.*
-	rm -f *.wdb
-	rm -f clockInfo.txt
-	rm -f xsim.ini
-	rm -f xsim.ini.bak
-	rm -f xsim.ini.map
-	rm -f .cxl.*
-	rm -fr xsim.dir
-	rm -fr .Xil
-	rm -fr output
-	rm -fr checkpoints
-	rm -fr .cxl
+	#rm -f *.log
+	#rm -f *.pb
+	#rm -f *.jou
+	#rm -f .timestamp.*
+	#rm -f *.wdb
+	#rm -f clockInfo.txt
+	#rm -f xsim.ini
+	#rm -f xsim.ini.bak
+	#rm -f xsim.ini.map
+	#rm -f .cxl.*
+	#rm -fr xsim.dir
+	#rm -fr .Xil
+	#rm -fr output
+	#rm -fr checkpoints
+	#rm -fr .cxl
 
 .PHONY: distclean
 distclean: clean
