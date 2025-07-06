@@ -2,7 +2,7 @@ set part_name [lindex $argv 0]
 set ip_name [lindex $argv 1] 
 
 # FIXME La creation d'un ip doit pouvoir se faire hors-projet.
-#
+# BEN OUI CRETIN DES ALPES. CF ip_generate_instances !!!!!!!
 
 create_project -part $part_name -force -in_memory tmp_ip_list  
 

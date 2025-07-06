@@ -12,6 +12,7 @@ SRC = ${SRC_VLOG} ${SRC_SVLOG} ${SRC_VHDL}
 
 VIVADO = vivado -mode batch -nojournal -nolog -notrace 
 XVLOG = xvlog --nolog -d XIL_TIMING
+XVHDL = xvhdl --nolog -d XIL_TIMING
 XELAB = xelab --nolog -d XIL_TIMING
 XSIM = xsim --nolog 
 
@@ -35,9 +36,15 @@ all: src
 
 .timestamp.compile_src: ${SRC}
 	@$(call banner, "Compiling\ sources")
-	@if [ -n "${SRC_SVLOG}" ]; then $(XVLOG) --sv ${SRC_SVLOG} |& ${HL}; fi
-	@if [ -n "${SRC_VLOG}" ]; then $(XVLOG) ${SRC_VLOG} |& ${HL}; fi
-	@if [ -n "${SRC_VHDL}" ]; then xvhdl -d XIL_TIMING ${SRC_VHDL} |& ${HL}; fi
+	@if [ -n "${SRC_SVLOG}" ]; then \
+		$(XVLOG) --sv ${SRC_SVLOG} |& ${HL}; \
+		fi
+	@if [ -n "${SRC_VLOG}" ]; then \
+		$(XVLOG) ${SRC_VLOG} |& ${HL}; \
+		fi
+	@if [ -n "${SRC_VHDL}" ]; then \
+		${XVHDL} ${SRC_VHDL} |& ${HL}; \
+		fi
 	@touch $@
 
 .timestamp.compile_tb: ${TB_SRC}
@@ -183,24 +190,30 @@ ip_create_config:
 
 .PHONY: clean
 clean:
-	#rm -f *.log
-	#rm -f *.pb
-	#rm -f *.jou
-	#rm -f .timestamp.*
-	#rm -f *.wdb
-	#rm -f clockInfo.txt
-	#rm -f xsim.ini
-	#rm -f xsim.ini.bak
-	#rm -f xsim.ini.map
-	#rm -f .cxl.*
-	#rm -fr xsim.dir
-	#rm -fr .Xil
-	#rm -fr output
-	#rm -fr checkpoints
-	#rm -fr .cxl
+	rm -fr checkpoints
+	rm -f clockInfo.txt
+	rm -f compile_simlib.log
+	rm -f compile_simlib.log.bak
+	rm -fr .cxl
+	rm -f .cxl.xil_xsim.version
+	rm -f .cxl_xsim.version
+	rm -f .cxl.xsim.g++.version
+	rm -fr output
+	rm -f snapshot_synth_timesim.wdb
+	rm -f .timestamp.*
+	rm -f xelab.pb
+	rm -fr .Xil
+	rm -fr xsim.dir
+	rm -f xsim.ini
+	rm -f xsim.ini.bak
+	rm -f xsim.ini.map
+	rm -f xsim.jou
+	rm -f xvlog.pb
 
 .PHONY: distclean
 distclean: clean
+	rm -f ip/catalog.txt
+	rm -f ip/config_templates/*
 	rm -fr sim_libs
 
 .PHONY: sim
