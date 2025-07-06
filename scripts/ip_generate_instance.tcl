@@ -2,10 +2,6 @@ set part_name [lindex $argv 0]
 set cfg_file  [lindex $argv 1]
 set inst_name [lindex $argv 2]
 
-# puts "part : $part_name"
-# puts "cfg_file : $cfg_file"
-# puts "inst_name : $inst_name"
-
 set_part $part_name
 
 # Read config file
@@ -14,7 +10,6 @@ set lines [split [read $f] "\n"]
 close $f
 
 set ip_name [string trim [lindex $lines 0]]
-# puts "ip_name : $ip_name"
 
 create_ip \
 	-name $ip_name \
@@ -39,6 +34,5 @@ foreach line [lrange $lines 1 end] {
 generate_target -force all [get_ips $inst_name]
 synth_ip [get_ips $inst_name] -force
 write_ip_tcl -force -multiple_files [get_ips]
-
 
 exit
