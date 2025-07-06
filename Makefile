@@ -162,8 +162,8 @@ ip_create_config:
 			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
 	fi
 
-.PHONY: ip_create_instances
-ip_create_instances:
+.PHONY: ip_generate_instances
+ip_generate_instances:
 	@$(call banner, "Creating IP instances ...")
 	@mkdir -p ./ip
 	@if [ -d ./ip/configs ]; then \
