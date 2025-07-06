@@ -11,6 +11,7 @@ It wraps the usual Vivado Tcl flow in a **portable Makefile** so that every deve
 ```
 .
 ├── constr/          # XDC constraints (board‑/pinout‑specific)
+├── ip/              # IP catalog, config files and sources
 ├── output/          # (auto‑generated) Reports, bitfiles, simulations
 │   ├── netlists/
 │   ├── reports/
@@ -150,6 +151,73 @@ gtkwave output/waveforms/behavioural.vcd
 | Unresolved unit, file not found        | Check that the filename is listed in `SRC_*`.                 |
 | `upload` hangs at "Open device failed" | Cable or board not detected – Did you turn the board on ?     |
 | Simulation runs but waveform empty     | Ensure `TB_TOP` matches the real test‑bench module/entity.    |
+
+## Using IPs
+
+If you want to use IPs in your project, well ... you'll have to know a bit more.
+First, you can retrieve the list of available IPs with :
+
+```bash
+make ip_update_catalog
+```
+
+This will generate a new file called ip/catalog.txt. In this file, one can find entries for each IP in the Xilinx Vivado catalog. For example :
+
+```
+>>> xilinx.com:ip:clk_wiz:6.0 (FREE)
+clk_wiz
+The Clocking Wizard creates an HDL file (Verilog or VHDL) that contains a clocking circuit customized to the user's clocking requirements.
+```
+
+You may also get a template file containing all available config options for a given IP:
+
+```bash
+ IP_NAME="clk_wiz" make ip_create_template
+```
+
+A new file will appear in ip/config_templates with all available options for your IP and their default values. 
+
+```bash
+cat ip/config_templates/clk_wiz.txt
+
+clk_wiz
+CONFIG.AUTO_PRIMITIVE : MMCM
+CONFIG.AXI_DRP : false
+CONFIG.CALC_DONE : empty
+CONFIG.CDDCDONE_PORT : cddcdone
+CONFIG.CDDCREQ_PORT : cddcreq
+CONFIG.CLKFB_IN_N_PORT : clkfb_in_n
+CONFIG.CLKFB_IN_PORT : clkfb_in
+CONFIG.CLKFB_IN_P_PORT : clkfb_in_p
+CONFIG.CLKFB_IN_SIGNALING : SINGLE
+[...]
+```
+
+If you want to instantiate this IP, you can copy this file inside the folder ip/configs and name it as you wish. For example :
+
+```bash
+cp ip/config_templates/clk_wiz.txt ip/configs/clocky
+```
+
+You can, of course, change all the settings you need, but be aware not to touch the first line. It it now time to generate our customized instance :
+
+```bash
+make ip_generate_instances
+```
+
+This will read all the files inside ip/configs and generate the corresponding instances inside the ip folder.
+
+You can now instanciate our 'clocky' module in your project. A template can be found in the file :
+
+```
+./ip/clock/clocky.veo 
+```
+
+Have fun :)
+
+
+
+
 
 ## License
 
