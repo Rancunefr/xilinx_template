@@ -54,7 +54,7 @@ all: src
 			 -tclbatch ./scripts/sim_vcd.tcl |& ${HL}
 	touch $@
 
-.timestamp.synthesis: ${SRC} ${XDC}
+.timestamp.synthesis: ${SRC} ${XDC} ${SRC_IP} 
 	@$(call banner, "Synthesis")
 	@mkdir -p output/netlists
 	@mkdir -p checkpoints
@@ -151,14 +151,14 @@ ip_update_catalog:
 	@$(VIVADO) -source ./scripts/ip_update_catalog.tcl \
 		-tclargs ${PART} |& ${HL}
 
-.PHONY: ip_create_config
+.PHONY: ip_create_template
 ip_create_config:
 	@if [ -z "$(IP_NAME)" ]; then \
-		echo "Usage : IP_NAME=\"name_of_the_ip\" make ip_create_config"; \
+		echo "Usage : IP_NAME=\"name_of_the_ip\" make ip_create_template"; \
 	else \
-		echo "Creating IP config for $(IP_NAME) ..." ; \
+		echo "Creating IP config template for $(IP_NAME) ..." ; \
 		mkdir -p ./ip/config_templates ; \
-		$(VIVADO) -source ./scripts/ip_create_config.tcl \
+		$(VIVADO) -source ./scripts/ip_create_template.tcl \
 			-tclargs ${PART} ${IP_NAME} |& $(HL) ;\
 	fi
 
