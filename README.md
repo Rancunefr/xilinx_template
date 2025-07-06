@@ -212,6 +212,11 @@ You can now instanciate our 'clocky' module in your project. A template can be f
 ```
 ./ip/clock/clocky.veo 
 ```
+One last thing: to make sure your IP is compiled with your project, don't forget to add its xci file to the SRC_IP variable, in settings.mk :
+
+```
+SRC_IP = ./ip/clocky/clocky.xci 
+```
 
 Have fun :)
 
