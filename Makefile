@@ -161,7 +161,7 @@ ip_update_catalog:
 		-tclargs ${PART} |& ${HL}
 
 .PHONY: ip_create_template
-ip_create_config:
+ip_create_template:
 	@if [ -z "$(IP_NAME)" ]; then \
 		echo "Usage : IP_NAME=\"name_of_the_ip\" make ip_create_template"; \
 	else \
