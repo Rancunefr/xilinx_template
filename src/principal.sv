@@ -20,13 +20,12 @@ compteur cnt (
 
 clocky instance_name
    (
-    .clk_out1(clk_interne),     // output clk_out1
-    .reset(rst), 			    // input reset
-    .locked(locked),            // output locked
-    .clk_in1(clk)               // input clk_in1
+    .clk_out1(clk_interne), 
+    .reset(rst),
+    .locked(locked), 
+    .clk_in1(clk)               
 );
 
-// INST_TAG_END ------ End INSTANTIATION Template ---------
 
 impulse pls( 
 	.clk(clk_interne),
