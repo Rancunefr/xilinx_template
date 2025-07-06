@@ -2,7 +2,7 @@
 // Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-// Date        : Sun Jul  6 14:53:47 2025
+// Date        : Sun Jul  6 16:17:39 2025
 // Host        : asimov running 64-bit Gentoo Linux
 // Command     : write_verilog -force -mode synth_stub /home/rancune/devel_fpga/xilinx_template.git/ip/clocky/clocky_stub.v
 // Design      : clocky

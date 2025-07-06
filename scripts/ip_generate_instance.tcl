@@ -31,8 +31,17 @@ foreach line [lrange $lines 1 end] {
     }
 }
 
-generate_target -force all [get_ips $inst_name]
-synth_ip [get_ips $inst_name] -force
-write_ip_tcl -force -multiple_files [get_ips]
+generate_target \
+	-force \
+	all \
+	[get_ips $inst_name]
+
+synth_ip -force \
+	[get_ips $inst_name] 
+
+write_ip_tcl \
+	-force \
+	[get_ips $inst_name] \
+	"./ip/$inst_name/$inst_name.tcl"
 
 exit
