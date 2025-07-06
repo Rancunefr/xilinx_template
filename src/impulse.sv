@@ -2,14 +2,14 @@
 
 module impulse(
     input  logic clk,
-	input  logic nrst,
+	input  logic rst,
     output logic impulse
     );
 
 logic [15:0] cnt ;
 
 always_ff @(posedge clk) begin         
-    if ( !nrst )
+    if ( rst )
         cnt <= 0;
     else
         cnt <= (cnt == 16'hFFFF )? 0 : cnt + 1 ;

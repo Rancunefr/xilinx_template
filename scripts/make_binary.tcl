@@ -1,7 +1,7 @@
 set bitfile [lindex $::argv 0]
 set binfile [lindex $::argv 1]
 
-# Génère un .bin via write_cfgmem
+# Creates a .bin file via write_cfgmem
 write_cfgmem \
 	-format bin \
 	-interface spix4 \

@@ -28,10 +28,6 @@ foreach ip $ip_list {
 
 }
 
-#DEBUG
-#set ip [get_ipdefs xilinx.com:ip:clk_wiz:6.0]
-#report_property $ip
-
 close $fp
 close_project -delete
 exit

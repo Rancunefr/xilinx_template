@@ -3,14 +3,14 @@
 module tb_principal;
 
 logic clk ;
-logic nrst ;
+logic rst ;
 logic [15:0] led ;
 
-parameter CLOCK_PERIOD = 6 ;
+parameter CLOCK_PERIOD = 10 ;
 
 principal DUT ( 
     .clk(clk),
-    .nrst(nrst),
+    .rst(rst),
 	.led(led)
 ) ;
 
@@ -22,11 +22,11 @@ initial begin
 end   
 
 initial begin
-    nrst = 1 ;
+    rst = 0 ;
     #3 ;
-    nrst = 0 ;
+    rst = 1 ;
     #20 ;
-    nrst = 1 ;
+    rst = 0 ;
 end
 
     

@@ -2,7 +2,7 @@
 
 module compteur(
     input  logic clk,
-    input  logic nrst,
+    input  logic rst,
 	input  logic impulse,
     output logic [15:0] led
     );
@@ -10,7 +10,7 @@ module compteur(
 logic [15:0] counter ;
 
 always_ff @(posedge clk) begin               // Circuits Logiques
-    if ( !nrst )
+    if ( rst )
         counter <= 16'hFF00;
     else
 		if ( impulse == 1 )

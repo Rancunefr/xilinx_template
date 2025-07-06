@@ -2,9 +2,9 @@ set part_name [lindex $argv 0]
 set cfg_file  [lindex $argv 1]
 set inst_name [lindex $argv 2]
 
-puts "part : $part_name"
-puts "cfg_file : $cfg_file"
-puts "inst_name : $inst_name"
+# puts "part : $part_name"
+# puts "cfg_file : $cfg_file"
+# puts "inst_name : $inst_name"
 
 set_part $part_name
 
@@ -14,7 +14,7 @@ set lines [split [read $f] "\n"]
 close $f
 
 set ip_name [string trim [lindex $lines 0]]
-puts "ip_name : $ip_name"
+# puts "ip_name : $ip_name"
 
 create_ip \
 	-name $ip_name \
