@@ -192,14 +192,14 @@ ip_create_template:
 clean:
 	rm -fr checkpoints
 	rm -f clockInfo.txt
-	rm -f compile_simlib.log
-	rm -f compile_simlib.log.bak
+	rm -f *.log
+	rm -f *.log.bak
 	rm -fr .cxl
 	rm -f .cxl.xil_xsim.version
 	rm -f .cxl_xsim.version
 	rm -f .cxl.xsim.g++.version
 	rm -fr output
-	rm -f snapshot_synth_timesim.wdb
+	rm -f *.wdb
 	rm -f .timestamp.*
 	rm -f xelab.pb
 	rm -fr .Xil
@@ -207,7 +207,7 @@ clean:
 	rm -f xsim.ini
 	rm -f xsim.ini.bak
 	rm -f xsim.ini.map
-	rm -f xsim.jou
+	rm -f *.jou
 	rm -f xvlog.pb
 
 .PHONY: distclean
