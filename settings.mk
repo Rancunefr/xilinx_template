@@ -13,7 +13,7 @@ SRC_VHDL =
 
 SRC_VLG = 
 
-SRC_IP = ./ip/clocky/clocky.xci 
+SRC_IP = ./ip/clocky/clocky.xci  
 
 TB_SRC = ./tb/tb_principal.sv
 

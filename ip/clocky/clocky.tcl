@@ -176,7 +176,7 @@ set_property -dict [list \
   CONFIG.ENABLE_CDDC {false} \
   CONFIG.ENABLE_CLKOUTPHY {false} \
   CONFIG.ENABLE_CLOCK_MONITOR {false} \
-  CONFIG.ENABLE_USER_CLOCK0 {false} \
+  CONFIG.ENABLE_USER_CLOCK0 {true} \
   CONFIG.ENABLE_USER_CLOCK1 {false} \
   CONFIG.ENABLE_USER_CLOCK2 {false} \
   CONFIG.ENABLE_USER_CLOCK3 {false} \
@@ -324,7 +324,7 @@ set_property -dict [list \
   CONFIG.USE_RESET {true} \
   CONFIG.USE_SAFE_CLOCK_STARTUP {false} \
   CONFIG.USE_SPREAD_SPECTRUM {false} \
-  CONFIG.USE_STATUS {false} \
+  CONFIG.USE_STATUS {true} \
 ] [get_ips clocky]
 
 # Runtime Parameters

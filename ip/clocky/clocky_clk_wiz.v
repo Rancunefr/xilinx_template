@@ -69,6 +69,7 @@ module clocky_clk_wiz
   output        clk_out1,
   // Status and control signals
   input         reset,
+  output [2:0]  STATUS,
   output        locked,
   input         clk_in1
  );

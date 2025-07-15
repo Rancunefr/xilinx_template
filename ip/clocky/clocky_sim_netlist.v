@@ -2,7 +2,7 @@
 // Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-// Date        : Sun Jul  6 17:05:10 2025
+// Date        : Sun Jul  6 23:20:43 2025
 // Host        : asimov running 64-bit Gentoo Linux
 // Command     : write_verilog -force -mode funcsim
 //               /home/rancune/devel_fpga/xilinx_template.git/ip/clocky/clocky_sim_netlist.v
@@ -17,20 +17,30 @@
 module clocky
    (clk_out1,
     reset,
+    STATUS,
     locked,
     clk_in1);
   output clk_out1;
   input reset;
+  output [2:0]STATUS;
   output locked;
   input clk_in1;
 
+  wire \<const0> ;
   (* IBUF_LOW_PWR *) wire clk_in1;
   wire clk_out1;
   wire locked;
   wire reset;
+  wire [2:0]NLW_inst_STATUS_UNCONNECTED;
 
+  assign STATUS[2] = \<const0> ;
+  assign STATUS[1] = \<const0> ;
+  assign STATUS[0] = \<const0> ;
+  GND GND
+       (.G(\<const0> ));
   clocky_clk_wiz inst
-       (.clk_in1(clk_in1),
+       (.STATUS(NLW_inst_STATUS_UNCONNECTED[2:0]),
+        .clk_in1(clk_in1),
         .clk_out1(clk_out1),
         .locked(locked),
         .reset(reset));
@@ -39,13 +49,16 @@ endmodule
 module clocky_clk_wiz
    (clk_out1,
     reset,
+    STATUS,
     locked,
     clk_in1);
   output clk_out1;
   input reset;
+  output [2:0]STATUS;
   output locked;
   input clk_in1;
 
+  wire \<const0> ;
   wire clk_in1;
   wire clk_in1_clocky;
   wire clk_out1;
@@ -71,6 +84,11 @@ module clocky_clk_wiz
   wire NLW_mmcm_adv_inst_PSDONE_UNCONNECTED;
   wire [15:0]NLW_mmcm_adv_inst_DO_UNCONNECTED;
 
+  assign STATUS[2] = \<const0> ;
+  assign STATUS[1] = \<const0> ;
+  assign STATUS[0] = \<const0> ;
+  GND GND
+       (.G(\<const0> ));
   (* BOX_TYPE = "PRIMITIVE" *) 
   BUFG clkf_buf
        (.I(clkfbout_clocky),

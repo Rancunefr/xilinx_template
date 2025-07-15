@@ -7,30 +7,31 @@ module principal(
     );
 
 logic impulse;
-logic clk_interne ;
-logic locked ;
+logic myclk;
+logic locked;
 
 compteur cnt (
-	.clk(clk_interne),
+	.clk(myclk),
 	.rst(rst),
 	.impulse(impulse),
 	.led(led)
 ) ;
 
-
-clocky instance_name
-   (
-    .clk_out1(clk_interne), 
-    .reset(rst),
-    .locked(locked), 
-    .clk_in1(clk)               
-);
-
-
 impulse pls( 
-	.clk(clk_interne),
+	.clk(myclk),
 	.rst(rst),
 	.impulse(impulse)
 ) ;
+
+clocky marcel
+   (
+    // Clock out ports
+    .clk_out1(myclk),     // output clk_out1
+    // Status and control signals
+    .reset(rst), // input reset
+    .locked(locked),       // output locked
+   // Clock in ports
+    .clk_in1(clk)      // input clk_in1
+);
 
 endmodule

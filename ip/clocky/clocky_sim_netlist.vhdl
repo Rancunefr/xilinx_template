@@ -2,7 +2,7 @@
 -- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
--- Date        : Sun Jul  6 17:05:10 2025
+-- Date        : Sun Jul  6 23:20:43 2025
 -- Host        : asimov running 64-bit Gentoo Linux
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/rancune/devel_fpga/xilinx_template.git/ip/clocky/clocky_sim_netlist.vhdl
@@ -19,12 +19,14 @@ entity clocky_clk_wiz is
   port (
     clk_out1 : out STD_LOGIC;
     reset : in STD_LOGIC;
+    STATUS : out STD_LOGIC_VECTOR ( 2 downto 0 );
     locked : out STD_LOGIC;
     clk_in1 : in STD_LOGIC
   );
 end clocky_clk_wiz;
 
 architecture STRUCTURE of clocky_clk_wiz is
+  signal \<const0>\ : STD_LOGIC;
   signal clk_in1_clocky : STD_LOGIC;
   signal clk_out1_clocky : STD_LOGIC;
   signal clkfbout_buf_clocky : STD_LOGIC;
@@ -57,6 +59,13 @@ architecture STRUCTURE of clocky_clk_wiz is
   attribute BOX_TYPE of clkout1_buf : label is "PRIMITIVE";
   attribute BOX_TYPE of mmcm_adv_inst : label is "PRIMITIVE";
 begin
+  STATUS(2) <= \<const0>\;
+  STATUS(1) <= \<const0>\;
+  STATUS(0) <= \<const0>\;
+GND: unisim.vcomponents.GND
+     port map (
+      G => \<const0>\
+    );
 clkf_buf: unisim.vcomponents.BUFG
      port map (
       I => clkfbout_clocky,
@@ -170,6 +179,7 @@ entity clocky is
   port (
     clk_out1 : out STD_LOGIC;
     reset : in STD_LOGIC;
+    STATUS : out STD_LOGIC_VECTOR ( 2 downto 0 );
     locked : out STD_LOGIC;
     clk_in1 : in STD_LOGIC
   );
@@ -178,9 +188,19 @@ entity clocky is
 end clocky;
 
 architecture STRUCTURE of clocky is
+  signal \<const0>\ : STD_LOGIC;
+  signal NLW_inst_STATUS_UNCONNECTED : STD_LOGIC_VECTOR ( 2 downto 0 );
 begin
+  STATUS(2) <= \<const0>\;
+  STATUS(1) <= \<const0>\;
+  STATUS(0) <= \<const0>\;
+GND: unisim.vcomponents.GND
+     port map (
+      G => \<const0>\
+    );
 inst: entity work.clocky_clk_wiz
      port map (
+      STATUS(2 downto 0) => NLW_inst_STATUS_UNCONNECTED(2 downto 0),
       clk_in1 => clk_in1,
       clk_out1 => clk_out1,
       locked => locked,

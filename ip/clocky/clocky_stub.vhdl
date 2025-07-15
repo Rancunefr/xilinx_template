@@ -2,7 +2,7 @@
 -- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
--- Date        : Sun Jul  6 17:05:10 2025
+-- Date        : Sun Jul  6 23:20:43 2025
 -- Host        : asimov running 64-bit Gentoo Linux
 -- Command     : write_vhdl -force -mode synth_stub /home/rancune/devel_fpga/xilinx_template.git/ip/clocky/clocky_stub.vhdl
 -- Design      : clocky
@@ -16,6 +16,7 @@ entity clocky is
   Port ( 
     clk_out1 : out STD_LOGIC;
     reset : in STD_LOGIC;
+    STATUS : out STD_LOGIC_VECTOR ( 2 downto 0 );
     locked : out STD_LOGIC;
     clk_in1 : in STD_LOGIC
   );
@@ -28,6 +29,6 @@ architecture stub of clocky is
   attribute syn_black_box : boolean;
   attribute black_box_pad_pin : string;
   attribute syn_black_box of stub : architecture is true;
-  attribute black_box_pad_pin of stub : architecture is "clk_out1,reset,locked,clk_in1";
+  attribute black_box_pad_pin of stub : architecture is "clk_out1,reset,STATUS[2:0],locked,clk_in1";
 begin
 end;
